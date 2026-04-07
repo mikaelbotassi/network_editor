@@ -1,0 +1,10 @@
+name: electric_digital_sketch_example
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  electric_digital_sketch:
+    path: ../

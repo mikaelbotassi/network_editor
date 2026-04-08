@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:electric_digital_sketch/electric_digital_sketch.dart';
 
 void main() {
@@ -10,11 +12,52 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    final controller = NetworkEditorController(
+      showDarkBackground: true,
+      initialCenter: const LatLng(-19.5356, -40.6306),
+      initialZoom: 17,
+      baseTileLayer: TileLayer(
+        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        userAgentPackageName: 'com.example.electric_digital_sketch_example',
+        maxNativeZoom: 19,
+      ),
+      initialValue: NetworkEditorValue(
+        nodes: [
+          EditorNode(
+            id: '1',
+            type: EditorNodeType.pole,
+            latitude: -19.5356,
+            longitude: -40.6306,
+            label: 'Poste 1',
+          ),
+          EditorNode(
+            id: '2',
+            type: EditorNodeType.pole,
+            latitude: -19.5360,
+            longitude: -40.6298,
+            label: 'Poste 2',
+          ),
+        ],
+        segments: [
+          EditorSegment(
+            id: 's1',
+            type: EditorSegmentType.primary,
+            fromNodeId: '1',
+            toNodeId: '2',
+            points: [
+              EditorCoordinate(latitude: -19.5356, longitude: -40.6306),
+              EditorCoordinate(latitude: -19.5360, longitude: -40.6298),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SafeArea(
-          child: Calculator(),
+          child: NetworkEditorWidget(controller: controller),
         ),
       ),
     );

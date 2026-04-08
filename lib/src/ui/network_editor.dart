@@ -1,13 +1,11 @@
-import 'package:electric_digital_sketch/src/domain/domain.dart';
-import 'package:electric_digital_sketch/src/ui/viewmodels/network_editor_viewmodel.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/connection_hint_card.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/network_editor_toolbar.dart';
+import 'package:electric_digital_sketch/electric_digital_sketch.dart';
+import 'package:electric_digital_sketch/src/ui/widgets/toolbar/network_map_editor_toolbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 class NetworkEditorWidget extends StatefulWidget {
-  final NetworkEditorViewmodel controller;
+  final NetworkEditorController controller;
   final Widget? topRightToolbar;
   final Widget? bottomPanel;
   final ValueChanged<NetworkEditorResult>? onSave;
@@ -115,7 +113,7 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
         Positioned(
           top: 12,
           left: 12,
-          child: NetworkEditorToolbar(controller: controller),
+          child: NetworkMapEditorToolbar(controller: controller),
         ),
 
         if (widget.topRightToolbar != null)

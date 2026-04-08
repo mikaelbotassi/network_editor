@@ -6,5 +6,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+  tabler_icons_plus: ^3.41.0
+  flutter_lints: ^6.0.0
   electric_digital_sketch:
     path: ../
+
+flutter:
+  uses-material-design: true

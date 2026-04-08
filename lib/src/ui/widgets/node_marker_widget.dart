@@ -6,6 +6,7 @@ class NodeMarkerWidget extends StatelessWidget {
   final bool selected;
 
   const NodeMarkerWidget({
+    super.key,
     required this.node,
     required this.selected,
   });

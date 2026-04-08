@@ -5,15 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-class NetworkEditorViewmodel extends ChangeNotifier {
-  NetworkEditorViewmodel({
+class NetworkEditorController extends ChangeNotifier {
+  NetworkEditorController({
     required NetworkEditorValue initialValue,
     this.initialCenter = const LatLng(-19.5, -40.6),
     this.initialZoom = 16,
     this.baseTileLayer,
     this.showDarkBackground = false,
-  })  : _originalValue = initialValue,
-        _value = initialValue;
+  }) : _originalValue = initialValue, _value = initialValue;
 
   final NetworkEditorValue _originalValue;
   NetworkEditorValue _value;

@@ -16,10 +16,19 @@ class NetworkMapEditorMenuButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 2,
+              spreadRadius: 3,
+              offset: Offset.zero,
+              color: colors.primary.withAlpha(50)
+            )
+          ],
+          border: Border.all(color: isActive ? Colors.white : colors.primary),
           borderRadius: BorderRadius.circular(4),
           color: isActive ? colors.primary : Colors.white,
         ),
-        child: Icon(TablerIcons.menu2, color: isActive ? colors.onPrimary : colors.primary),
+        child: Icon(TablerIcons.menu2, color: isActive ? colors.onPrimary : colors.primary, size: 14),
       )
     );
   }

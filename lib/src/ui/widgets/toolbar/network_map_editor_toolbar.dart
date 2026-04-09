@@ -1,15 +1,17 @@
 import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/domain/enums/network_edit_mode.dart';
 import 'package:electric_digital_sketch/src/ui/widgets/toolbar/network_map_editor_menu_button.dart';
 import 'package:electric_digital_sketch/src/ui/widgets/toolbar/network_map_toolbar_item.dart';
 import 'package:flutter/material.dart';
+import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 class NetworkMapEditorToolbar extends StatefulWidget {
   final NetworkEditorController controller;
+  final List<ToolbarActionItem> items;
 
   const NetworkMapEditorToolbar({
     super.key,
     required this.controller,
+    this.items = const [],
   });
 
   @override
@@ -21,35 +23,20 @@ class _NetworkMapEditorToolbarState extends State<NetworkMapEditorToolbar>
   late final AnimationController _animationController;
   bool _expanded = false;
 
-  final List<ToolbarActionItem> _items = const [
+  final List<ToolbarActionItem> _items = [
     ToolbarActionItem(
-      icon: Icons.pan_tool_alt,
-      mode: NetworkEditMode.view,
+      icon: TablerIcons.handFinger,
+      mode: 'view',
       tooltip: 'Visualizar',
     ),
     ToolbarActionItem(
-      icon: Icons.add_location_alt,
-      mode: NetworkEditMode.addPole,
-      tooltip: 'Novo poste',
-    ),
-    ToolbarActionItem(
-      icon: Icons.add_business,
-      mode: NetworkEditMode.addTransformer,
-      tooltip: 'Novo trafo',
-    ),
-    ToolbarActionItem(
-      icon: Icons.timeline,
-      mode: NetworkEditMode.connectPrimary,
-      tooltip: 'Ligar rede',
-    ),
-    ToolbarActionItem(
-      icon: Icons.open_with,
-      mode: NetworkEditMode.moveNode,
+      icon: TablerIcons.arrowsMove,
+      mode: 'move',
       tooltip: 'Mover',
     ),
     ToolbarActionItem(
-      icon: Icons.delete,
-      mode: NetworkEditMode.delete,
+      icon: TablerIcons.trash,
+      mode: 'delete',
       tooltip: 'Excluir',
     ),
   ];
@@ -79,9 +66,8 @@ class _NetworkMapEditorToolbarState extends State<NetworkMapEditorToolbar>
     }
   }
 
-  void _selectMode(NetworkEditMode mode) {
-    widget.controller.setMode(mode);
-
+  void _selectMode(String mode) {
+    widget.controller.mode = mode;
     setState(() => _expanded = false);
     _animationController.reverse();
   }
@@ -107,18 +93,20 @@ class _NetworkMapEditorToolbarState extends State<NetworkMapEditorToolbar>
                     final item = _items[index];
                     final selected = widget.controller.mode == item.mode;
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Transform.translate(
-                        offset: Offset(
-                          0,
-                          (1 - _animationController.value) * 12,
-                        ),
-                        child: NetworkMapToolbarItemWidget(
-                          icon: item.icon,
-                          label: item.tooltip,
-                          selected: selected,
-                          onTap: () => _selectMode(item.mode),
+                    return IntrinsicWidth(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Transform.translate(
+                          offset: Offset(
+                            0,
+                            (1 - _animationController.value) * 12,
+                          ),
+                          child: NetworkMapToolbarItemWidget(
+                            icon: item.icon,
+                            label: item.tooltip,
+                            selected: selected,
+                            onTap: () => _selectMode(item.mode),
+                          ),
                         ),
                       ),
                     );

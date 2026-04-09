@@ -1,5 +1,6 @@
+import 'dart:async';
+
 import 'package:electric_digital_sketch/src/domain/domain.dart';
-import 'package:electric_digital_sketch/src/domain/enums/network_edit_mode.dart';
 import 'package:electric_digital_sketch/src/ui/widgets/node_marker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -8,6 +9,7 @@ import 'package:latlong2/latlong.dart';
 class NetworkEditorController extends ChangeNotifier {
   NetworkEditorController({
     required NetworkEditorValue initialValue,
+    this.onMapTap,
     this.initialCenter = const LatLng(-19.5, -40.6),
     this.initialZoom = 16,
     this.baseTileLayer,
@@ -16,13 +18,14 @@ class NetworkEditorController extends ChangeNotifier {
 
   final NetworkEditorValue _originalValue;
   NetworkEditorValue _value;
+  final FutureOr<void> Function(TapPosition, LatLng)? onMapTap;
 
   final LatLng initialCenter;
   final double initialZoom;
   final TileLayer? baseTileLayer;
   final bool showDarkBackground;
 
-  NetworkEditMode mode = NetworkEditMode.view;
+  String _mode = 'view';
   String? selectedNodeId;
   String? selectedSegmentId;
   EditorNode? connectingFromNode;
@@ -35,58 +38,33 @@ class NetworkEditorController extends ChangeNotifier {
   List<EditorSegment> get activeSegments =>
       _value.segments.where((e) => !e.isDeleted).toList();
 
-  void setMode(NetworkEditMode newMode) {
-    mode = newMode;
-    if (newMode != NetworkEditMode.connectPrimary) {
-      connectingFromNode = null;
-    }
+  set mode(String newMode) {
+    _mode = newMode;
     notifyListeners();
   }
+
+  String get mode => _mode;
 
   void cancelConnection() {
     connectingFromNode = null;
     notifyListeners();
   }
 
-  NetworkInteractionResult handleMapTap(LatLng point) {
-    switch (mode) {
-      case NetworkEditMode.addPole:
-        addPole(point);
-        return const SilentInteractionResult();
-
-      case NetworkEditMode.addTransformer:
-        addTransformer(point);
-        return const SilentInteractionResult();
-
-      case NetworkEditMode.moveNode:
-        if (selectedNodeId != null) {
-          moveNode(selectedNodeId!, point);
-        }
-        return const SilentInteractionResult();
-
-      default:
-        return const SilentInteractionResult();
-    }
-  }
-
   NetworkInteractionResult handleNodeTap(EditorNode node) {
     switch (mode) {
-      case NetworkEditMode.view:
+      case 'view':
         selectedNodeId = node.id;
         notifyListeners();
         return NodeTappedResult(node);
 
-      case NetworkEditMode.delete:
+      case 'delete':
         deleteNode(node.id);
         return const SilentInteractionResult();
 
-      case NetworkEditMode.moveNode:
+      case 'move':
         selectedNodeId = node.id;
         notifyListeners();
         return NodeTappedResult(node);
-
-      case NetworkEditMode.connectPrimary:
-        return _handleConnectPrimary(node);
 
       default:
         selectedNodeId = node.id;
@@ -97,12 +75,7 @@ class NetworkEditorController extends ChangeNotifier {
 
   NetworkInteractionResult handleSegmentTap(EditorSegment segment) {
     switch (mode) {
-      case NetworkEditMode.view:
-        selectedSegmentId = segment.id;
-        notifyListeners();
-        return SegmentTappedResult(segment);
-
-      case NetworkEditMode.delete:
+      case 'delete':
         deleteSegment(segment.id);
         return const SilentInteractionResult();
 
@@ -111,54 +84,6 @@ class NetworkEditorController extends ChangeNotifier {
         notifyListeners();
         return SegmentTappedResult(segment);
     }
-  }
-
-  NetworkInteractionResult _handleConnectPrimary(EditorNode tappedNode) {
-    if (connectingFromNode == null) {
-      connectingFromNode = tappedNode;
-      notifyListeners();
-      return const SilentInteractionResult();
-    }
-
-    final from = connectingFromNode!;
-    final to = tappedNode;
-
-    if (from.id == to.id) {
-      return const SilentInteractionResult();
-    }
-
-    connectPrimaryNetwork(from, to);
-    connectingFromNode = null;
-    notifyListeners();
-    return const SilentInteractionResult();
-  }
-
-  void addPole(LatLng point) {
-    final node = EditorNode(
-      id: _tempId(),
-      type: EditorNodeType.pole,
-      latitude: point.latitude,
-      longitude: point.longitude,
-      label: 'Novo poste',
-      isNew: true,
-    );
-
-    _value = _value.copyWith(nodes: [..._value.nodes, node]);
-    notifyListeners();
-  }
-
-  void addTransformer(LatLng point) {
-    final node = EditorNode(
-      id: _tempId(),
-      type: EditorNodeType.transformer,
-      latitude: point.latitude,
-      longitude: point.longitude,
-      label: 'Novo transformador',
-      isNew: true,
-    );
-
-    _value = _value.copyWith(nodes: [..._value.nodes, node]);
-    notifyListeners();
   }
 
   void moveNode(String nodeId, LatLng point) {
@@ -171,23 +96,6 @@ class NetworkEditorController extends ChangeNotifier {
     }).toList();
 
     _value = _value.copyWith(nodes: nodes);
-    notifyListeners();
-  }
-
-  void connectPrimaryNetwork(EditorNode from, EditorNode to) {
-    final segment = EditorSegment(
-      id: _tempId(),
-      type: EditorSegmentType.primary,
-      fromNodeId: from.id,
-      toNodeId: to.id,
-      isNew: true,
-      points: [
-        EditorCoordinate(latitude: from.latitude, longitude: from.longitude),
-        EditorCoordinate(latitude: to.latitude, longitude: to.longitude),
-      ],
-    );
-
-    _value = _value.copyWith(segments: [..._value.segments, segment]);
     notifyListeners();
   }
 
@@ -243,11 +151,10 @@ class NetworkEditorController extends ChangeNotifier {
   }) {
     return activeSegments.map((segment) {
       return Polyline(
-        points: segment.points
-            .map((e) => LatLng(e.latitude, e.longitude))
-            .toList(),
-        strokeWidth: segment.type == EditorSegmentType.primary ? 4 : 2,
-        color: segment.id == selectedSegmentId ? Colors.orange : Colors.red,
+        points: segment.points.map((e) => LatLng(e.latitude, e.longitude)).toList(),
+        strokeWidth: segment.strokeWidth,
+        color: segment.id == selectedSegmentId ? Colors.orange : segment.color,
+        pattern: segment.pattern
         // onTap: () => onSegmentTap(segment),
       );
     }).toList();
@@ -303,5 +210,4 @@ class NetworkEditorController extends ChangeNotifier {
     return true;
   }
 
-  String _tempId() => 'tmp_${DateTime.now().microsecondsSinceEpoch}';
 }

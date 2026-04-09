@@ -25,14 +25,15 @@ class MyApp extends StatelessWidget {
         nodes: [
           EditorNode(
             id: '1',
-            type: EditorNodeType.pole,
+            svgPath: 'assets/icons/poste-terra.svg',
+            groupId: 'pole',
             latitude: -19.5356,
             longitude: -40.6306,
             label: 'Poste 1',
           ),
           EditorNode(
             id: '2',
-            type: EditorNodeType.pole,
+            groupId: 'pole',
             latitude: -19.5360,
             longitude: -40.6298,
             label: 'Poste 2',
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
         segments: [
           EditorSegment(
             id: 's1',
-            type: EditorSegmentType.primary,
+            groupId: 'rede-primaria',
             fromNodeId: '1',
             toNodeId: '2',
             points: [

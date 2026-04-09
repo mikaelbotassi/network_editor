@@ -14,6 +14,7 @@ dependencies:
   latlong2: ^0.9.1
   tabler_icons_plus: ^3.41.0
   result_dart: ^2.2.0
+  flutter_svg: ^2.2.4
   
 
 dev_dependencies:

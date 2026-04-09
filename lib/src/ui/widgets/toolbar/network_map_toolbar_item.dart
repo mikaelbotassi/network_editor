@@ -1,9 +1,8 @@
-import 'package:electric_digital_sketch/src/domain/enums/network_edit_mode.dart';
 import 'package:flutter/material.dart';
 
 class ToolbarActionItem {
   final IconData icon;
-  final NetworkEditMode mode;
+  final String mode;
   final String tooltip;
 
   const ToolbarActionItem({
@@ -36,6 +35,14 @@ class NetworkMapToolbarItemWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 2,
+              spreadRadius: 1,
+              offset: Offset.zero,
+              color: colors.primary.withAlpha(50)
+            )
+          ],
           color: selected ? colors.primaryContainer : Colors.white,
           borderRadius: BorderRadius.circular(4),
         ),

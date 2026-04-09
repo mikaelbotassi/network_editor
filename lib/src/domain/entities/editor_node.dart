@@ -1,8 +1,12 @@
-import 'package:electric_digital_sketch/src/domain/enums/editor_node_type.dart';
+import 'package:flutter/material.dart';
+import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 class EditorNode {
   final String id;
-  final EditorNodeType type;
+  final String? groupId;
+  final String? svgPath;
+  final IconData icon;
+  final Color color;
   final double latitude;
   final double longitude;
   final String? label;
@@ -10,20 +14,26 @@ class EditorNode {
   final bool isDeleted;
   final Map<String, dynamic> properties;
 
-  const EditorNode({
+  EditorNode({
     required this.id,
-    required this.type,
     required this.latitude,
     required this.longitude,
+    this.svgPath,
+    this.icon = TablerIcons.circleFilled,
+    this.color = Colors.blue,
+    this.groupId,
     this.label,
     this.isNew = false,
     this.isDeleted = false,
-    this.properties = const {},
+    this.properties = const {}
   });
 
   EditorNode copyWith({
     String? id,
-    EditorNodeType? type,
+    String? groupId,
+    String? svgUrl,
+    IconData? icon,
+    Color? color,
     double? latitude,
     double? longitude,
     String? label,
@@ -33,7 +43,10 @@ class EditorNode {
   }) {
     return EditorNode(
       id: id ?? this.id,
-      type: type ?? this.type,
+      groupId: groupId ?? this.groupId,
+      svgPath: svgUrl ?? this.svgPath,
+      icon: icon ?? this.icon,
+      color: color ?? this.color,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       label: label ?? this.label,
@@ -42,4 +55,5 @@ class EditorNode {
       properties: properties ?? this.properties,
     );
   }
+
 }

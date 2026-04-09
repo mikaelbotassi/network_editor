@@ -1,9 +1,13 @@
 import 'package:electric_digital_sketch/src/domain/entities/editor_coordinate.dart';
-import 'package:electric_digital_sketch/src/domain/enums/editor_segment_type.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 
 class EditorSegment {
   final String id;
-  final EditorSegmentType type;
+  final String groupId;
+  final double strokeWidth;
+  final Color color;
+  final StrokePattern pattern;
   final List<EditorCoordinate> points;
   final String? fromNodeId;
   final String? toNodeId;
@@ -13,8 +17,11 @@ class EditorSegment {
 
   const EditorSegment({
     required this.id,
-    required this.type,
+    required this.groupId,
     required this.points,
+    this.strokeWidth = 2,
+    this.color = Colors.black,
+    this.pattern = const StrokePattern.solid(),
     this.fromNodeId,
     this.toNodeId,
     this.isNew = false,
@@ -24,7 +31,10 @@ class EditorSegment {
 
   EditorSegment copyWith({
     String? id,
-    EditorSegmentType? type,
+    String? groupId,
+    double? strokeWidth,
+    Color? color,
+    StrokePattern? pattern,
     List<EditorCoordinate>? points,
     String? fromNodeId,
     String? toNodeId,
@@ -34,7 +44,10 @@ class EditorSegment {
   }) {
     return EditorSegment(
       id: id ?? this.id,
-      type: type ?? this.type,
+      groupId: groupId ?? this.groupId,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+      color: color ?? this.color,
+      pattern: pattern ?? this.pattern,
       points: points ?? this.points,
       fromNodeId: fromNodeId ?? this.fromNodeId,
       toNodeId: toNodeId ?? this.toNodeId,
@@ -43,4 +56,5 @@ class EditorSegment {
       properties: properties ?? this.properties,
     );
   }
+
 }

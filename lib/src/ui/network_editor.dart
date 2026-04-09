@@ -1,13 +1,12 @@
+import 'dart:async';
 import 'package:electric_digital_sketch/electric_digital_sketch.dart';
 import 'package:electric_digital_sketch/src/ui/widgets/toolbar/network_map_editor_toolbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 
 class NetworkEditorWidget extends StatefulWidget {
   final NetworkEditorController controller;
-  final Widget? topRightToolbar;
-  final Widget? bottomPanel;
+  final List<Positioned> overlayItems;
   final ValueChanged<NetworkEditorResult>? onSave;
   final Future<void> Function(EditorNode node)? onNodeTap;
   final Future<void> Function(EditorSegment segment)? onSegmentTap;
@@ -15,11 +14,10 @@ class NetworkEditorWidget extends StatefulWidget {
   const NetworkEditorWidget({
     super.key,
     required this.controller,
-    this.topRightToolbar,
-    this.bottomPanel,
     this.onSave,
     this.onNodeTap,
     this.onSegmentTap,
+    this.overlayItems = const [],
   });
 
   @override
@@ -48,16 +46,12 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
   @override
   void dispose() {
     widget.controller.removeListener(_refresh);
+    widget.controller.dispose();
     super.dispose();
   }
 
   void _refresh() {
     if (mounted) setState(() {});
-  }
-
-  Future<void> _onTapMap(TapPosition _, LatLng point) async {
-    final action = widget.controller.handleMapTap(point);
-    await _processAction(action);
   }
 
   Future<void> _processAction(NetworkInteractionResult result) async {
@@ -75,73 +69,44 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
   @override
   Widget build(BuildContext context) {
     final controller = widget.controller;
+    return Scaffold(
+      body: Stack(
+        children: [
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: controller.initialCenter,
+              initialZoom: controller.initialZoom,
+              onTap: controller.onMapTap,
+            ),
+            children: [
+              if (controller.baseTileLayer != null) controller.baseTileLayer!,
+              if (controller.showDarkBackground)
+                const ColoredBox(color: Colors.black),
 
-    return Stack(
-      children: [
-        FlutterMap(
-          mapController: _mapController,
-          options: MapOptions(
-            initialCenter: controller.initialCenter,
-            initialZoom: controller.initialZoom,
-            onTap: _onTapMap,
-          ),
-          children: [
-            if (controller.baseTileLayer != null) controller.baseTileLayer!,
-            if (controller.showDarkBackground)
-              const ColoredBox(color: Colors.black),
-
-            PolylineLayer(
-              polylines: controller.buildPolylines(
-                onSegmentTap: (segment) async {
-                  final result = controller.handleSegmentTap(segment);
-                  await _processAction(result);
-                },
+              PolylineLayer(
+                polylines: controller.buildPolylines(
+                  onSegmentTap: (segment) async {
+                    final result = controller.handleSegmentTap(segment);
+                    await _processAction(result);
+                  },
+                ),
               ),
-            ),
 
-            MarkerLayer(
-              markers: controller.buildMarkers(
-                onTapNode: (node) async {
-                  final result = controller.handleNodeTap(node);
-                  await _processAction(result);
-                },
+              MarkerLayer(
+                markers: controller.buildMarkers(
+                  onTapNode: (node) async {
+                    final result = controller.handleNodeTap(node);
+                    await _processAction(result);
+                  },
+                ),
               ),
-            ),
-          ],
-        ),
-
-        Positioned(
-          top: 12,
-          left: 12,
-          child: NetworkMapEditorToolbar(controller: controller),
-        ),
-
-        if (widget.topRightToolbar != null)
-          Positioned(
-            top: 12,
-            right: 12,
-            child: widget.topRightToolbar!,
+            ],
           ),
-
-        if (controller.connectingFromNode != null)
-          Positioned(
-            bottom: 16,
-            left: 16,
-            right: 16,
-            child: ConnectHintCard(
-              fromNode: controller.connectingFromNode!,
-              onCancel: controller.cancelConnection,
-            ),
-          ),
-
-        if (widget.bottomPanel != null)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: widget.bottomPanel!,
-          ),
-      ],
+          ...widget.overlayItems
+        ],
+      ),
+      floatingActionButton: NetworkMapEditorToolbar(controller: controller),
     );
   }
 }

@@ -1,24 +1,28 @@
 import 'dart:async';
+
 import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/toolbar/network_map_editor_toolbar.dart';
+import 'package:electric_digital_sketch/src/plugins/location_permission_service.dart';
+import 'package:electric_digital_sketch/src/ui/viewmodels/network_editor_location_coordinator.dart';
+import 'package:electric_digital_sketch/src/ui/widgets/network_editor_map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class NetworkEditorWidget extends StatefulWidget {
-  final NetworkEditorController controller;
-  final List<Positioned> overlayItems;
-  final ValueChanged<NetworkEditorResult>? onSave;
-  final Future<void> Function(EditorNode node)? onNodeTap;
-  final Future<void> Function(EditorSegment segment)? onSegmentTap;
-
   const NetworkEditorWidget({
     super.key,
     required this.controller,
-    this.onSave,
-    this.onNodeTap,
-    this.onSegmentTap,
+    this.initCentered = true,
     this.overlayItems = const [],
+    this.onInteraction,
+    this.onSave,
   });
+
+  final bool initCentered;
+  final NetworkEditorController controller;
+  final List<Widget> overlayItems;
+  final FutureOr<void> Function(NetworkInteractionResult result)? onInteraction;
+  final ValueChanged<NetworkEditorResult>? onSave;
 
   @override
   State<NetworkEditorWidget> createState() => _NetworkEditorWidgetState();
@@ -26,87 +30,92 @@ class NetworkEditorWidget extends StatefulWidget {
 
 class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
   final MapController _mapController = MapController();
+  final LayerHitNotifier<EditorSegment> _segmentHitNotifier = ValueNotifier(null);
+
+  late final NetworkEditorLocationCoordinator _locationCoordinator;
+
+  NetworkEditorController get controller => widget.controller;
 
   @override
   void initState() {
     super.initState();
-    widget.controller.addListener(_refresh);
-  }
 
-  @override
-  void didUpdateWidget(covariant NetworkEditorWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
+    _locationCoordinator = NetworkEditorLocationCoordinator(
+      fallbackCenter: controller.initialCenter,
+      initialZoom: controller.initialZoom,
+      ensurePermission: LocationPermissionService.ensurePermission,
+      onMoveToCurrentLocation: (center, zoom) {
+        if (mounted) {
+          _mapController.move(center, zoom);
+        }
+      },
+    );
 
-    if (oldWidget.controller != widget.controller) {
-      oldWidget.controller.removeListener(_refresh);
-      widget.controller.addListener(_refresh);
+    _segmentHitNotifier.addListener(_handleSegmentHit);
+
+    if (widget.initCentered) {
+      _locationCoordinator.bootstrap();
     }
   }
 
   @override
   void dispose() {
-    widget.controller.removeListener(_refresh);
-    widget.controller.dispose();
+    _segmentHitNotifier.removeListener(_handleSegmentHit);
+    _segmentHitNotifier.dispose();
+    _mapController.dispose();
+    _locationCoordinator.dispose();
     super.dispose();
   }
 
-  void _refresh() {
-    if (mounted) setState(() {});
+  Future<void> _emitInteraction(
+      Future<NetworkInteractionResult> Function() action,
+      ) async {
+    final result = await action();
+    await widget.onInteraction?.call(result);
   }
 
-  Future<void> _processAction(NetworkInteractionResult result) async {
-    if (result is NodeTappedResult && widget.onNodeTap != null) {
-      await widget.onNodeTap!(result.node);
-      return;
-    }
+  Future<void> _handleSegmentHit() async {
+    final hit = _segmentHitNotifier.value;
+    if (hit == null || hit.hitValues.isEmpty) return;
 
-    if (result is SegmentTappedResult && widget.onSegmentTap != null) {
-      await widget.onSegmentTap!(result.segment);
-      return;
-    }
+    final segment = hit.hitValues.first;
+
+    await _emitInteraction(() => controller.handleSegmentTap(segment));
+
+    _segmentHitNotifier.value = null;
+  }
+
+  Future<void> _handleMapTap(TapPosition tapPosition, LatLng point) {
+    return _emitInteraction(() => controller.handleMapTap(tapPosition, point));
+  }
+
+  Future<void> _handleNodeTap(EditorNode node) {
+    return _emitInteraction(() => controller.handleNodeTap(node));
+  }
+
+  void _handleSave() {
+    widget.onSave?.call(controller.buildResult());
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = widget.controller;
-    return Scaffold(
-      body: Stack(
-        children: [
-          FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              initialCenter: controller.initialCenter,
-              initialZoom: controller.initialZoom,
-              onTap: controller.onMapTap,
-            ),
-            children: [
-              if (controller.baseTileLayer != null) controller.baseTileLayer!,
-              if (controller.showDarkBackground)
-                const ColoredBox(color: Colors.black),
+    return AnimatedBuilder(
+      animation: Listenable.merge([controller, _locationCoordinator]),
+      builder: (context, _) {
+        final locationState = _locationCoordinator.state;
 
-              PolylineLayer(
-                polylines: controller.buildPolylines(
-                  onSegmentTap: (segment) async {
-                    final result = controller.handleSegmentTap(segment);
-                    await _processAction(result);
-                  },
-                ),
-              ),
-
-              MarkerLayer(
-                markers: controller.buildMarkers(
-                  onTapNode: (node) async {
-                    final result = controller.handleNodeTap(node);
-                    await _processAction(result);
-                  },
-                ),
-              ),
-            ],
-          ),
-          ...widget.overlayItems
-        ],
-      ),
-      floatingActionButton: NetworkMapEditorToolbar(controller: controller),
+        return NetworkEditorMapView(
+          controller: controller,
+          mapController: _mapController,
+          segmentHitNotifier: _segmentHitNotifier,
+          locationGranted: locationState.granted,
+          initialCenter: locationState.center ?? controller.initialCenter,
+          onMapTap: _handleMapTap,
+          onNodeTap: _handleNodeTap,
+          overlayItems: widget.overlayItems,
+          onSave: _handleSave,
+        );
+      },
     );
   }
 }

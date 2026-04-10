@@ -4,7 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 
 class EditorSegment {
   final String id;
-  final String groupId;
+  final String? groupId;
   final double strokeWidth;
   final Color color;
   final StrokePattern pattern;
@@ -17,7 +17,7 @@ class EditorSegment {
 
   const EditorSegment({
     required this.id,
-    required this.groupId,
+    this.groupId,
     required this.points,
     this.strokeWidth = 2,
     this.color = Colors.black,

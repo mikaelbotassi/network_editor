@@ -31,7 +31,7 @@ class EditorNode {
   EditorNode copyWith({
     String? id,
     String? groupId,
-    String? svgUrl,
+    String? svgPath,
     IconData? icon,
     Color? color,
     double? latitude,
@@ -44,7 +44,7 @@ class EditorNode {
     return EditorNode(
       id: id ?? this.id,
       groupId: groupId ?? this.groupId,
-      svgPath: svgUrl ?? this.svgPath,
+      svgPath: svgPath ?? this.svgPath,
       icon: icon ?? this.icon,
       color: color ?? this.color,
       latitude: latitude ?? this.latitude,

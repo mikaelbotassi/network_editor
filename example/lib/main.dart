@@ -13,7 +13,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = NetworkEditorController(
-      showDarkBackground: true,
       initialCenter: const LatLng(-19.5356, -40.6306),
       initialZoom: 17,
       baseTileLayer: TileLayer(
@@ -26,6 +25,7 @@ class MyApp extends StatelessWidget {
           EditorNode(
             id: '1',
             svgPath: 'assets/icons/poste-terra.svg',
+            color: NetworkEditorDefaultMarkerStyles.blue.fillColor,
             groupId: 'pole',
             latitude: -19.5356,
             longitude: -40.6306,
@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
           EditorNode(
             id: '2',
             groupId: 'pole',
+            color: NetworkEditorDefaultMarkerStyles.blue.fillColor,
             latitude: -19.5360,
             longitude: -40.6298,
             label: 'Poste 2',
@@ -43,6 +44,9 @@ class MyApp extends StatelessWidget {
           EditorSegment(
             id: 's1',
             groupId: 'rede-primaria',
+            strokeWidth: 4,
+            color: NetworkEditorDefaultSegmentStyles.blueBold.color,
+            pattern: NetworkEditorDefaultSegmentStyles.blueBold.strokePattern,
             fromNodeId: '1',
             toNodeId: '2',
             points: [

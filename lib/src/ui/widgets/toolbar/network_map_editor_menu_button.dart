@@ -1,3 +1,4 @@
+import 'package:electric_digital_sketch/electric_digital_sketch.dart';
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
@@ -16,14 +17,7 @@ class NetworkMapEditorMenuButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 2,
-              spreadRadius: 3,
-              offset: Offset.zero,
-              color: colors.primary.withAlpha(50)
-            )
-          ],
+          boxShadow: NetworkEditorShadows.elevatedOverlay,
           border: Border.all(color: isActive ? Colors.white : colors.primary),
           borderRadius: BorderRadius.circular(4),
           color: isActive ? colors.primary : Colors.white,

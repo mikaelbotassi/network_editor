@@ -13,6 +13,7 @@ dependencies:
   electric_digital_sketch:
     path: ../
   flutter_svg: ^2.2.4
+  geolocator: ^14.0.2
 
 flutter:
   uses-material-design: true

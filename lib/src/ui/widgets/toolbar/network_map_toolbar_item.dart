@@ -1,8 +1,10 @@
+import 'package:electric_digital_sketch/electric_digital_sketch.dart';
+import 'package:electric_digital_sketch/src/domain/entities/editor_mode_key.dart';
 import 'package:flutter/material.dart';
 
 class ToolbarActionItem {
   final IconData icon;
-  final String mode;
+  final EditorModeKey mode;
   final String tooltip;
 
   const ToolbarActionItem({
@@ -35,14 +37,7 @@ class NetworkMapToolbarItemWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 2,
-              spreadRadius: 1,
-              offset: Offset.zero,
-              color: colors.primary.withAlpha(50)
-            )
-          ],
+          boxShadow: NetworkEditorShadows.overlayPanel,
           color: selected ? colors.primaryContainer : Colors.white,
           borderRadius: BorderRadius.circular(4),
         ),

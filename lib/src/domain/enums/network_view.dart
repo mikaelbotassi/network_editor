@@ -1,0 +1,3 @@
+enum BackgroundView {
+  map,solidDark;
+}

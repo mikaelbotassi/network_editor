@@ -1,4 +1,5 @@
 import 'package:electric_digital_sketch/electric_digital_sketch.dart';
+import 'package:electric_digital_sketch/src/domain/entities/editor_mode_key.dart';
 import 'package:electric_digital_sketch/src/ui/widgets/toolbar/network_map_editor_menu_button.dart';
 import 'package:electric_digital_sketch/src/ui/widgets/toolbar/network_map_toolbar_item.dart';
 import 'package:flutter/material.dart';
@@ -26,17 +27,17 @@ class _NetworkMapEditorToolbarState extends State<NetworkMapEditorToolbar>
   final List<ToolbarActionItem> _items = [
     ToolbarActionItem(
       icon: TablerIcons.handFinger,
-      mode: 'view',
+      mode: EditorModeKey.view,
       tooltip: 'Visualizar',
     ),
     ToolbarActionItem(
       icon: TablerIcons.arrowsMove,
-      mode: 'move',
+      mode: EditorModeKey.move,
       tooltip: 'Mover',
     ),
     ToolbarActionItem(
       icon: TablerIcons.trash,
-      mode: 'delete',
+      mode: EditorModeKey.delete,
       tooltip: 'Excluir',
     ),
   ];
@@ -66,8 +67,8 @@ class _NetworkMapEditorToolbarState extends State<NetworkMapEditorToolbar>
     }
   }
 
-  void _selectMode(String mode) {
-    widget.controller.mode = mode;
+  void _selectMode(EditorModeKey mode) {
+    widget.controller.setMode(mode);
     setState(() => _expanded = false);
     _animationController.reverse();
   }

@@ -5,22 +5,18 @@ import 'package:flutter_svg/flutter_svg.dart';
 class NodeMarkerWidget extends StatelessWidget {
   final EditorNode node;
   final bool selected;
-  final double size;
   final double iconSize;
 
   const NodeMarkerWidget({
     super.key,
     required this.node,
     required this.selected,
-    this.size = 42,
     this.iconSize = 18,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size,
-      height: size,
       decoration: BoxDecoration(
         color: selected ? Colors.orange : node.color,
         shape: BoxShape.circle,

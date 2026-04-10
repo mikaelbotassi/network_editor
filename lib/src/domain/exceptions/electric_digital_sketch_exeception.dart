@@ -1,4 +1,4 @@
-abstract class ElectricDigitalSketchExeception implements Exception{
+class ElectricDigitalSketchExeception implements Exception{
 
   final String message;
   final StackTrace? stackTrace;

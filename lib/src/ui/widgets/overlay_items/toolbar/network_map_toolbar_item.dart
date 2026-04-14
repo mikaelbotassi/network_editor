@@ -1,10 +1,10 @@
-import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/domain/entities/editor_mode_key.dart';
+import 'package:electric_digital_sketch/src/domain/domain.dart';
+import 'package:electric_digital_sketch/src/ui/styles/network_editor_shadows.dart';
 import 'package:flutter/material.dart';
 
 class ToolbarActionItem {
   final IconData icon;
-  final EditorModeKey mode;
+  final EditorMode mode;
   final String tooltip;
 
   const ToolbarActionItem({

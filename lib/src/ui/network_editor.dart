@@ -68,9 +68,9 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
   }
 
   Future<void> _emitInteraction(
-      Future<NetworkInteractionResult> Function() action,
+      Future<NetworkInteractionResult> Function(BuildContext) action,
       ) async {
-    final result = await action();
+    final result = await action(context);
     await widget.onInteraction?.call(result);
   }
 
@@ -80,17 +80,17 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
 
     final segment = hit.hitValues.first;
 
-    await _emitInteraction(() => controller.handleSegmentTap(segment));
+    await _emitInteraction((BuildContext context) => controller.handleSegmentTap(context, segment));
 
     _segmentHitNotifier.value = null;
   }
 
   Future<void> _handleMapTap(TapPosition tapPosition, LatLng point) {
-    return _emitInteraction(() => controller.handleMapTap(tapPosition, point));
+    return _emitInteraction((BuildContext context) => controller.handleMapTap(context, tapPosition, point));
   }
 
   Future<void> _handleNodeTap(EditorNode node) {
-    return _emitInteraction(() => controller.handleNodeTap(node));
+    return _emitInteraction((BuildContext context) => controller.handleNodeTap(context, node));
   }
 
   void _handleSave() {
@@ -107,6 +107,7 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
         return NetworkEditorMapView(
           controller: controller,
           mapController: _mapController,
+          onRecenter: _locationCoordinator.bootstrap,
           segmentHitNotifier: _segmentHitNotifier,
           locationGranted: locationState.granted,
           initialCenter: locationState.center ?? controller.initialCenter,

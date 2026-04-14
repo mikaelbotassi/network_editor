@@ -15,14 +15,14 @@ class NetworkMapEditorMenuButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           boxShadow: NetworkEditorShadows.elevatedOverlay,
           border: Border.all(color: isActive ? Colors.white : colors.primary),
           borderRadius: BorderRadius.circular(4),
           color: isActive ? colors.primary : Colors.white,
         ),
-        child: Icon(TablerIcons.menu2, color: isActive ? colors.onPrimary : colors.primary, size: 14),
+        child: Icon(TablerIcons.menu2, color: isActive ? colors.onPrimary : colors.primary),
       )
     );
   }

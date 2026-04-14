@@ -1,13 +1,9 @@
 import 'dart:async';
 
 import 'package:electric_digital_sketch/src/domain/domain.dart';
-import 'package:electric_digital_sketch/src/domain/entities/editor_interaction_context.dart';
-import 'package:electric_digital_sketch/src/domain/entities/editor_interaction_handler.dart';
-import 'package:electric_digital_sketch/src/domain/entities/editor_mode_key.dart';
-import 'package:electric_digital_sketch/src/domain/entities/network_editor_state.dart';
-import 'package:electric_digital_sketch/src/domain/entities/view_mode_handler.dart';
 import 'package:electric_digital_sketch/src/domain/enums/network_view.dart';
 import 'package:electric_digital_sketch/src/ui/widgets/node_marker_widget.dart';
+import 'package:electric_digital_sketch/src/ui/widgets/overlay_items/toolbar/network_map_toolbar_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -23,14 +19,14 @@ class NetworkEditorController extends ChangeNotifier {
     this.initialZoom = 16,
     this.baseTileLayer,
     BackgroundView backgroundView = BackgroundView.map,
-    Map<EditorModeKey, EditorInteractionHandler>? customModes,
+    Map<EditorMode, EditorInteractionHandler>? customModes,
   })  : _originalValue = initialValue, _backgroundView = backgroundView,
-  _state = NetworkEditorState(value: initialValue, mode: EditorModeKey.view) {
+  _state = NetworkEditorState(value: initialValue, mode: EditorMode.view) {
     _handlers = {
-      EditorModeKey.view: const ViewModeHandler(),
-      EditorModeKey.move: const MoveModeHandler(),
-      EditorModeKey.delete: const DeleteModeHandler(),
-      EditorModeKey.connect: const ConnectModeHandler(),
+      EditorMode.view: const ViewModeHandler(),
+      EditorMode.move: const MoveModeHandler(),
+      EditorMode.delete: const DeleteModeHandler(),
+      EditorMode.connect: const ConnectModeHandler(),
       ...?customModes,
     };
   }
@@ -51,13 +47,18 @@ class NetworkEditorController extends ChangeNotifier {
     setBackground(_backgroundView == BackgroundView.map ? BackgroundView.solidDark : BackgroundView.map);
   }
 
-  late final Map<EditorModeKey, EditorInteractionHandler> _handlers;
+  late final Map<EditorMode, EditorInteractionHandler> _handlers;
+  List<ToolbarActionItem> get toolbarActions => _handlers.keys.map((k) => ToolbarActionItem(
+    icon: k.icon,
+    mode: k,
+    tooltip: k.label,
+  )).toList();
 
   NetworkEditorState _state;
 
   NetworkEditorState get state => _state;
   NetworkEditorValue get value => _state.value;
-  EditorModeKey get mode => _state.mode;
+  EditorMode get mode => _state.mode;
 
   String? get selectedNodeId => _state.selectedNodeId;
   String? get selectedSegmentId => _state.selectedSegmentId;
@@ -66,11 +67,11 @@ class NetworkEditorController extends ChangeNotifier {
   List<EditorNode> get activeNodes => _state.activeNodes;
   List<EditorSegment> get activeSegments => _state.activeSegments;
 
-  void registerMode(EditorModeKey key, EditorInteractionHandler handler) {
+  void registerMode(EditorMode key, EditorInteractionHandler handler) {
     _handlers[key] = handler;
   }
 
-  void setMode(EditorModeKey mode) {
+  void setMode(EditorMode mode) {
     if (_state.mode == mode) return;
 
     if (!_handlers.containsKey(mode)) {
@@ -115,27 +116,24 @@ class NetworkEditorController extends ChangeNotifier {
     );
   }
 
-  Future<NetworkInteractionResult> handleMapTap(
-      TapPosition tapPosition,
-      LatLng point,
-      ) async {
+  Future<NetworkInteractionResult> handleMapTap(BuildContext buildContext, TapPosition tapPosition, LatLng point) async {
     final handler = _resolveHandler();
     return await Future.value(
-      handler.onMapTap(_context, tapPosition, point),
+      handler.onMapTap(_context, buildContext, tapPosition, point),
     );
   }
 
-  Future<NetworkInteractionResult> handleNodeTap(EditorNode node) async {
+  Future<NetworkInteractionResult> handleNodeTap(BuildContext buildContext, EditorNode node) async {
     final handler = _resolveHandler();
     return await Future.value(
-      handler.onNodeTap(_context, node),
+      handler.onNodeTap(_context, buildContext, node),
     );
   }
 
-  Future<NetworkInteractionResult> handleSegmentTap(EditorSegment segment) async {
+  Future<NetworkInteractionResult> handleSegmentTap(BuildContext buildContext, EditorSegment segment) async {
     final handler = _resolveHandler();
     return await Future.value(
-      handler.onSegmentTap(_context, segment),
+      handler.onSegmentTap(_context, buildContext, segment),
     );
   }
 
@@ -174,6 +172,14 @@ class NetworkEditorController extends ChangeNotifier {
     }).toList(growable: false);
 
     _replaceValue(value.copyWith(segments: segments));
+  }
+
+  void createNode(EditorNode node) {
+    final newNodes = [
+      ...value.nodes,
+      node.copyWith(isNew: true),
+    ];
+    _replaceValue(value.copyWith(nodes: newNodes));
   }
 
   void createSegment(String fromNodeId, String toNodeId) {

@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 @immutable
 class NetworkEditorState {
   final NetworkEditorValue value;
-  final EditorModeKey mode;
+  final EditorMode mode;
   final String? selectedNodeId;
   final String? selectedSegmentId;
   final String? connectingFromNodeId;
@@ -30,7 +30,7 @@ class NetworkEditorState {
 
   NetworkEditorState copyWith({
     NetworkEditorValue? value,
-    EditorModeKey? mode,
+    EditorMode? mode,
     String? selectedNodeId,
     bool clearSelectedNodeId = false,
     String? selectedSegmentId,

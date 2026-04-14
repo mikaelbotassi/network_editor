@@ -1,3 +1,4 @@
+import 'package:electric_digital_sketch_example/src/entities/add_pole_interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -20,6 +21,9 @@ class MyApp extends StatelessWidget {
         userAgentPackageName: 'com.example.electric_digital_sketch_example',
         maxNativeZoom: 19,
       ),
+      customModes: {
+        EditorMode.custom(value: 'add_pole', icon: Icons.add, label: 'Novo poste') : AddPoleInteraction()
+      },
       initialValue: NetworkEditorValue(
         nodes: [
           EditorNode(
@@ -62,7 +66,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SafeArea(
-          child: NetworkEditorWidget(controller: controller),
+          child: NetworkEditorWidget(
+            controller: controller,
+          ),
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/domain/entities/editor_interaction_context.dart';
+import 'package:electric_digital_sketch/src/domain/entities/entities.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -13,25 +13,20 @@ abstract class EditorInteractionHandler {
   const EditorInteractionHandler();
 
   FutureOr<NetworkInteractionResult> onMapTap(
-      EditorInteractionContext context,
-      TapPosition tapPosition,
-      LatLng point,
-      ) {
+    EditorInteractionContext context,
+    BuildContext buildContext,
+    TapPosition tapPosition,
+    LatLng point,
+  ) {
     return const SilentInteractionResult();
   }
 
-  FutureOr<NetworkInteractionResult> onNodeTap(
-      EditorInteractionContext context,
-      EditorNode node,
-      ) {
+  FutureOr<NetworkInteractionResult> onNodeTap(EditorInteractionContext context, BuildContext buildContext, EditorNode node) {
     context.controller.selectNode(node.id);
     return NodeTappedResult(node);
   }
 
-  FutureOr<NetworkInteractionResult> onSegmentTap(
-      EditorInteractionContext context,
-      EditorSegment segment,
-      ) {
+  FutureOr<NetworkInteractionResult> onSegmentTap(EditorInteractionContext context, BuildContext buildContext, EditorSegment segment) {
     context.controller.selectSegment(segment.id);
     return SegmentTappedResult(segment);
   }
@@ -41,19 +36,13 @@ class DeleteModeHandler extends EditorInteractionHandler {
   const DeleteModeHandler();
 
   @override
-  FutureOr<NetworkInteractionResult> onNodeTap(
-      EditorInteractionContext context,
-      EditorNode node,
-      ) {
+  FutureOr<NetworkInteractionResult> onNodeTap(EditorInteractionContext context, BuildContext buildContext, EditorNode node) {
     context.controller.deleteNode(node.id);
     return const SilentInteractionResult();
   }
 
   @override
-  FutureOr<NetworkInteractionResult> onSegmentTap(
-      EditorInteractionContext context,
-      EditorSegment segment,
-      ) {
+  FutureOr<NetworkInteractionResult> onSegmentTap(EditorInteractionContext context, BuildContext buildContext, EditorSegment segment){
     context.controller.deleteSegment(segment.id);
     return const SilentInteractionResult();
   }
@@ -63,23 +52,24 @@ class MoveModeHandler extends EditorInteractionHandler {
   const MoveModeHandler();
 
   @override
-  FutureOr<NetworkInteractionResult> onNodeTap(
-      EditorInteractionContext context,
-      EditorNode node,
-      ) {
+  FutureOr<NetworkInteractionResult> onNodeTap(EditorInteractionContext context, BuildContext buildContext, EditorNode node) {
     context.controller.selectNode(node.id);
     return NodeTappedResult(node);
   }
+
+  @override
+  FutureOr<NetworkInteractionResult> onMapTap(EditorInteractionContext context, BuildContext buildContext, TapPosition tapPosition, LatLng point) {
+    context.controller.moveNode(context.selectedNodeId!, point);
+    return const SilentInteractionResult();
+  }
+
 }
 
 class ConnectModeHandler extends EditorInteractionHandler {
   const ConnectModeHandler();
 
   @override
-  FutureOr<NetworkInteractionResult> onNodeTap(
-      EditorInteractionContext context,
-      EditorNode node,
-      ) {
+  FutureOr<NetworkInteractionResult> onNodeTap(EditorInteractionContext context, BuildContext buildContext, EditorNode node) {
     final fromNodeId = context.connectingFromNodeId;
 
     if (fromNodeId == null) {

@@ -1,9 +1,7 @@
 import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/domain/entities/editor_mode_key.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/toolbar/network_map_editor_menu_button.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/toolbar/network_map_toolbar_item.dart';
+import 'package:electric_digital_sketch/src/ui/widgets/overlay_items/toolbar/network_map_editor_menu_button.dart';
+import 'package:electric_digital_sketch/src/ui/widgets/overlay_items/toolbar/network_map_toolbar_item.dart';
 import 'package:flutter/material.dart';
-import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 class NetworkMapEditorToolbar extends StatefulWidget {
   final NetworkEditorController controller;
@@ -12,7 +10,7 @@ class NetworkMapEditorToolbar extends StatefulWidget {
   const NetworkMapEditorToolbar({
     super.key,
     required this.controller,
-    this.items = const [],
+    required this.items,
   });
 
   @override
@@ -23,24 +21,6 @@ class _NetworkMapEditorToolbarState extends State<NetworkMapEditorToolbar>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   bool _expanded = false;
-
-  final List<ToolbarActionItem> _items = [
-    ToolbarActionItem(
-      icon: TablerIcons.handFinger,
-      mode: EditorModeKey.view,
-      tooltip: 'Visualizar',
-    ),
-    ToolbarActionItem(
-      icon: TablerIcons.arrowsMove,
-      mode: EditorModeKey.move,
-      tooltip: 'Mover',
-    ),
-    ToolbarActionItem(
-      icon: TablerIcons.trash,
-      mode: EditorModeKey.delete,
-      tooltip: 'Excluir',
-    ),
-  ];
 
   @override
   void initState() {
@@ -67,7 +47,7 @@ class _NetworkMapEditorToolbarState extends State<NetworkMapEditorToolbar>
     }
   }
 
-  void _selectMode(EditorModeKey mode) {
+  void _selectMode(EditorMode mode) {
     widget.controller.setMode(mode);
     setState(() => _expanded = false);
     _animationController.reverse();
@@ -90,8 +70,8 @@ class _NetworkMapEditorToolbarState extends State<NetworkMapEditorToolbar>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: List.generate(_items.length, (index) {
-                    final item = _items[index];
+                  children: List.generate(widget.items.length, (index) {
+                    final item = widget.items[index];
                     final selected = widget.controller.mode == item.mode;
 
                     return IntrinsicWidth(

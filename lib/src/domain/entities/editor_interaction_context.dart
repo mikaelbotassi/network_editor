@@ -1,6 +1,6 @@
-import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/domain/entities/editor_mode_key.dart';
-import 'package:electric_digital_sketch/src/domain/entities/network_editor_state.dart';
+
+import 'package:electric_digital_sketch/src/domain/domain.dart';
+import 'package:electric_digital_sketch/src/ui/ui.dart';
 
 /// =======================================================
 /// INTERACTION CONTEXT
@@ -15,7 +15,7 @@ class EditorInteractionContext {
     required this.state,
   });
 
-  EditorModeKey get mode => state.mode;
+  EditorMode get mode => state.mode;
   NetworkEditorValue get value => state.value;
 
   String? get selectedNodeId => state.selectedNodeId;

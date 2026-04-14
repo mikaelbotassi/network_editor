@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/domain/enums/network_view.dart';
-import 'package:electric_digital_sketch/src/ui/viewmodels/network_editor_snapshot_service.dart';
-import 'package:electric_digital_sketch/src/ui/network_image_editor_page.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/overlay_items/network_image_editor_buttom.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/overlay_items/recenter_button.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/overlay_items/toogle_view_button.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/overlay_items/toolbar/network_map_editor_toolbar.dart';
+import 'package:network_editor/network_editor.dart';
+import 'package:network_editor/src/domain/enums/network_view.dart';
+import 'package:network_editor/src/ui/viewmodels/network_editor_snapshot_service.dart';
+import 'package:network_editor/src/ui/network_image_editor_page.dart';
+import 'package:network_editor/src/ui/widgets/overlay_items/network_image_editor_buttom.dart';
+import 'package:network_editor/src/ui/widgets/overlay_items/recenter_button.dart';
+import 'package:network_editor/src/ui/widgets/overlay_items/toogle_view_button.dart';
+import 'package:network_editor/src/ui/widgets/overlay_items/toolbar/network_map_editor_toolbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';

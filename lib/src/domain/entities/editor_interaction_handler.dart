@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:electric_digital_sketch/src/domain/entities/entities.dart';
+import 'package:network_editor/src/domain/entities/entities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';

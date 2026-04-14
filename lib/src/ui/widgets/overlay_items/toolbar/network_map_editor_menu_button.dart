@@ -1,4 +1,4 @@
-import 'package:electric_digital_sketch/electric_digital_sketch.dart';
+import 'package:network_editor/network_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 

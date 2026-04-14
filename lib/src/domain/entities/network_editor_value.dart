@@ -1,5 +1,5 @@
-import 'package:electric_digital_sketch/src/domain/entities/editor_node.dart';
-import 'package:electric_digital_sketch/src/domain/entities/editor_segment.dart';
+import 'package:network_editor/src/domain/entities/editor_node.dart';
+import 'package:network_editor/src/domain/entities/editor_segment.dart';
 
 class NetworkEditorValue {
   final List<EditorNode> nodes;

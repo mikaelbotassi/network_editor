@@ -1,5 +1,5 @@
-import 'package:electric_digital_sketch/src/domain/domain.dart';
-import 'package:electric_digital_sketch/src/ui/styles/network_editor_shadows.dart';
+import 'package:network_editor/src/domain/domain.dart';
+import 'package:network_editor/src/ui/styles/network_editor_shadows.dart';
 import 'package:flutter/material.dart';
 
 class ToolbarActionItem {

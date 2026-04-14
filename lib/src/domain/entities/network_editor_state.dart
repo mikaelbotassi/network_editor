@@ -1,5 +1,5 @@
-import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/domain/entities/editor_mode_key.dart';
+import 'package:network_editor/network_editor.dart';
+import 'package:network_editor/src/domain/entities/editor_mode_key.dart';
 import 'package:flutter/foundation.dart';
 
 /// =======================================================

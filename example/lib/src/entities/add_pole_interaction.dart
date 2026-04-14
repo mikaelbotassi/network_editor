@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:electric_digital_sketch/electric_digital_sketch.dart';
+import 'package:network_editor/network_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';

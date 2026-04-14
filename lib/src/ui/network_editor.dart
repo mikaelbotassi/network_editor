@@ -1,12 +1,13 @@
 import 'dart:async';
 
-import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/plugins/location_permission_service.dart';
-import 'package:electric_digital_sketch/src/ui/viewmodels/network_editor_location_coordinator.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/network_editor_map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:network_editor/src/domain/domain.dart';
+import 'package:network_editor/src/plugins/location_permission_service.dart';
+import 'package:network_editor/src/ui/viewmodels/network_editor_controller.dart';
+import 'package:network_editor/src/ui/viewmodels/network_editor_location_coordinator.dart';
+import 'package:network_editor/src/ui/widgets/network_editor_map_view.dart';
 
 class NetworkEditorWidget extends StatefulWidget {
   const NetworkEditorWidget({

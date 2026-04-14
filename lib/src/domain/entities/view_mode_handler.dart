@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:electric_digital_sketch/src/domain/domain.dart';
+import 'package:network_editor/src/domain/domain.dart';
 import 'package:flutter/widgets.dart';
 
 /// =======================================================

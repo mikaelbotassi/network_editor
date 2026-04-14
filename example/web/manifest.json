@@ -1,6 +1,6 @@
 {
-    "name": "electric_digital_sketch_example",
-    "short_name": "electric_digital_sketch_example",
+    "name": "network_editor_example",
+    "short_name": "network_editor_example",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

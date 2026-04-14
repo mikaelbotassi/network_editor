@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:electric_digital_sketch/src/domain/domain.dart';
-import 'package:electric_digital_sketch/src/domain/enums/network_view.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/node_marker_widget.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/overlay_items/toolbar/network_map_toolbar_item.dart';
+import 'package:network_editor/src/domain/domain.dart';
+import 'package:network_editor/src/domain/enums/network_view.dart';
+import 'package:network_editor/src/ui/widgets/node_marker_widget.dart';
+import 'package:network_editor/src/ui/widgets/overlay_items/toolbar/network_map_toolbar_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';

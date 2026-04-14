@@ -1,4 +1,4 @@
-import 'package:electric_digital_sketch/src/domain/entities/editor_coordinate.dart';
+import 'package:network_editor/src/domain/entities/editor_coordinate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 

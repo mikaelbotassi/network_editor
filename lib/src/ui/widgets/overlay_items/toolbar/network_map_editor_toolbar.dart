@@ -1,6 +1,6 @@
-import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/overlay_items/toolbar/network_map_editor_menu_button.dart';
-import 'package:electric_digital_sketch/src/ui/widgets/overlay_items/toolbar/network_map_toolbar_item.dart';
+import 'package:network_editor/network_editor.dart';
+import 'package:network_editor/src/ui/widgets/overlay_items/toolbar/network_map_editor_menu_button.dart';
+import 'package:network_editor/src/ui/widgets/overlay_items/toolbar/network_map_toolbar_item.dart';
 import 'package:flutter/material.dart';
 
 class NetworkMapEditorToolbar extends StatefulWidget {

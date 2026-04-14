@@ -1,5 +1,5 @@
-import 'package:electric_digital_sketch/electric_digital_sketch.dart';
-import 'package:electric_digital_sketch/src/domain/enums/network_view.dart';
+import 'package:network_editor/network_editor.dart';
+import 'package:network_editor/src/domain/enums/network_view.dart';
 import 'package:flutter/material.dart';
 
 class ToogleViewButton extends StatelessWidget {
@@ -25,7 +25,7 @@ class ToogleViewButton extends StatelessWidget {
           border: Border.all(color: Colors.white, width: 2)
         ),
         child: Image.asset(
-          assetsUrl, package: 'electric_digital_sketch',
+          assetsUrl, package: 'network_editor',
           width: 64,
           height: 64,
           fit: BoxFit.cover,

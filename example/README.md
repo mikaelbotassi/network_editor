@@ -1,4 +1,4 @@
-# electric_digital_sketch_example
+# network_editor_example
 
 A new Flutter project.
 

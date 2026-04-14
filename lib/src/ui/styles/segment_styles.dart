@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:electric_digital_sketch/src/ui/styles/style_models.dart';
+import 'package:network_editor/src/ui/styles/style_models.dart';
 import 'package:flutter_map/flutter_map.dart';
 
 abstract final class NetworkEditorDefaultSegmentStyles {

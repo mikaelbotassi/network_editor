@@ -1,4 +1,4 @@
-name: electric_digital_sketch_example
+name: network_editor_example
 
 environment:
   sdk: ^3.11.4
@@ -10,7 +10,7 @@ dependencies:
   latlong2: ^0.9.1
   tabler_icons_plus: ^3.41.0
   flutter_lints: ^6.0.0
-  electric_digital_sketch:
+  network_editor:
     path: ../
   flutter_svg: ^2.2.4
   geolocator: ^14.0.2

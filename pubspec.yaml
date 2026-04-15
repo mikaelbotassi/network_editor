@@ -1,5 +1,5 @@
 name: network_editor
-description: "Digital sketch for electrical network design."
+description: "Flutter package for editing network maps with nodes and segments."
 version: 0.0.1
 homepage:
 

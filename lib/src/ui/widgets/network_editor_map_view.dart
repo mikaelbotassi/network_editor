@@ -85,6 +85,11 @@ class _NetworkEditorMapViewState extends State<NetworkEditorMapView> {
                 onTap: widget.onMapTap,
               ),
               children: [
+                RichAttributionWidget(
+                  attributions: [
+                    TextSourceAttribution('© OpenStreetMap contributors'),
+                  ],
+                ),
                 if (widget.controller.backgroundView == BackgroundView.map && widget.controller.baseTileLayer != null) widget.controller.baseTileLayer!,
                 if (widget.controller.backgroundView == BackgroundView.solidDark) const ColoredBox(color: Colors.black),
                 if (widget.locationGranted && widget.showCurrentPosition)

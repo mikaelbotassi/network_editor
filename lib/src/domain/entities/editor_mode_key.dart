@@ -1,5 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 /// =======================================================

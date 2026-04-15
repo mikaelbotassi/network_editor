@@ -1,8 +1,8 @@
-import 'package:network_editor_example/src/entities/add_pole_interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:network_editor/network_editor.dart';
+import 'package:network_editor_example/src/entities/add_pole_interaction.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       initialZoom: 17,
       baseTileLayer: TileLayer(
         urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        userAgentPackageName: 'com.example.network_editor_example',
+        userAgentPackageName: 'br.com.mikaelbotassi.networkeditorexample',
         maxNativeZoom: 19,
       ),
       customModes: {

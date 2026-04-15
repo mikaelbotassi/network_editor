@@ -1,5 +1,4 @@
-import 'package:network_editor/network_editor.dart';
-import 'package:network_editor/src/domain/entities/editor_mode_key.dart';
+import 'package:network_editor/src/domain/domain.dart';
 import 'package:flutter/foundation.dart';
 
 /// =======================================================

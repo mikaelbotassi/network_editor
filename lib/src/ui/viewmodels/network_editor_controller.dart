@@ -212,7 +212,9 @@ class NetworkEditorController extends ChangeNotifier {
   List<Marker> buildMarkers({
     required Future<void> Function(EditorNode node) onTapNode,
   }) {
-    return activeNodes.map((node) {
+    return activeNodes
+      .where((node) => node.latitude.isFinite && node.longitude.isFinite)
+      .map((node) {
       return Marker(
         point: LatLng(node.latitude, node.longitude),
         width: 42,
@@ -230,7 +232,9 @@ class NetworkEditorController extends ChangeNotifier {
   }
 
   List<Polyline<EditorSegment>> buildPolylines() {
-    return activeSegments.map((segment) {
+    return activeSegments
+      .where((segment) => segment.points.every((p) => p.latitude.isFinite && p.longitude.isFinite))
+      .map((segment) {
       return Polyline<EditorSegment>(
         points: segment.points
             .map((e) => LatLng(e.latitude, e.longitude))

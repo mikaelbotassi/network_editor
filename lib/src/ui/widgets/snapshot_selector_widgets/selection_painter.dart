@@ -7,25 +7,32 @@ class SelectionPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final overlayRect = Offset.zero & size;
+    final canvasRect = Offset.zero & size;
     final rect = selectionRect;
 
-    canvas.drawRect(
-      overlayRect,
-      Paint()..color = Colors.black.withAlpha(110),
-    );
-
     if (rect == null) {
+      canvas.drawRect(
+        canvasRect,
+        Paint()..color = Colors.black.withAlpha(110),
+      );
       return;
     }
 
-    canvas.saveLayer(overlayRect, Paint());
-    canvas.drawRect(
-      overlayRect,
-      Paint()..color = Colors.black.withAlpha(110),
+    final outsideSelectionPath = Path.combine(
+      PathOperation.difference,
+      Path()..addRect(canvasRect),
+      Path()..addRect(rect),
     );
-    canvas.drawRect(rect, Paint()..blendMode = BlendMode.clear);
-    canvas.restore();
+
+    canvas.drawPath(
+      outsideSelectionPath,
+      Paint()..color = Colors.black.withAlpha(150),
+    );
+
+    canvas.drawRect(
+      rect,
+      Paint()..color = Colors.white.withAlpha(20),
+    );
 
     canvas.drawRect(
       rect,

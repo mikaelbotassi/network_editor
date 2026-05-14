@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:electric_digital_sketch/electric_digital_sketch.dart';
 import 'package:network_editor/network_editor.dart';
 import 'package:network_editor/src/ui/viewmodels/network_editor_snapshot_service.dart';
-import 'package:network_editor/src/ui/widgets/network_editor_loader_scope.dart';
 import 'package:network_editor/src/ui/network_map_snapshot_selector_page.dart';
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -48,7 +47,7 @@ class _NetworkImageEditorButtomState extends State<NetworkImageEditorButtom> {
 
       final backgroundImage = await Navigator.of(context).push<File>(
         PageRouteBuilder(
-          pageBuilder: (_, __, ___) => NetworkMapSnapshotSelectorPage(
+          pageBuilder: (_, _, _) => NetworkMapSnapshotSelectorPage(
             snapshot: originalSnapshot,
           ),
           transitionDuration: Duration.zero,

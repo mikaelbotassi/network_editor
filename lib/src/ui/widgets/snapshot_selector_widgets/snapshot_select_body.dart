@@ -1,76 +1,53 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:network_editor/src/ui/viewmodels/snapshot_selection_controller.dart';
+import 'package:network_editor/src/ui/widgets/core/alert.dart';
+import 'package:network_editor/src/ui/widgets/snapshot_selector_widgets/selection_painter.dart';
+import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-class SnapshotSelectBody extends StatefulWidget {
+class SnapshotSelectBody extends StatelessWidget {
   const SnapshotSelectBody({
     required this.size,
-    required this.onChanged,
     required this.image,
+    required this.controller,
     super.key,
   });
 
   final Size size;
   final Uint8List image;
-  final Function(Offset dragStart, Rect selectionRect) onChanged;
-
-  @override
-  State<SnapshotSelectBody> createState() => _SnapshotSelectBodyState();
-}
-
-class _SnapshotSelectBodyState extends State<SnapshotSelectBody> {
-
-  Rect? _selectionRect;
-  Offset? _dragStart;
+  final SnapshotSelectionController controller;
 
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: SizedBox(
-        width: widget.size.width,
-        height: widget.size.height,
+        width: size.width,
+        height: size.height,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onPanStart: (details) {
-            final point = _clampOffset(
-              details.localPosition,
-              widget.size,
+            controller.startSelection(
+              localPosition: details.localPosition,
+              bounds: size,
             );
-            setState(() {
-              _dragStart = point;
-              _selectionRect = Rect.fromLTWH(
-                point.dx,
-                point.dy,
-                0,
-                0,
-              );
-            });
           },
           onPanUpdate: (details) {
-            final dragStart = _dragStart;
-            if (dragStart == null) return;
-
-            final point = _clampOffset(
-              details.localPosition,
-              widget.size,
+            controller.updateSelection(
+              localPosition: details.localPosition,
+              bounds: size,
             );
-            setState(() {
-              _selectionRect = Rect.fromPoints(dragStart, point);
-            });
           },
           onPanEnd: (_) {
-            setState(() {
-              _dragStart = null;
-              _selectionRect = _normalizeSelection(_selectionRect);
-            });
+            controller.endSelection();
           },
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.memory(widget.image, fit: BoxFit.fill),
+              Image.memory(image, fit: BoxFit.fill),
               CustomPaint(
                 painter: SelectionPainter(
-                  selectionRect: _selectionRect,
+                  selectionRect: controller.selectionRect,
                 ),
               ),
               Positioned(
@@ -89,20 +66,4 @@ class _SnapshotSelectBodyState extends State<SnapshotSelectBody> {
       ),
     );
   }
-
-  Rect? _normalizeSelection(Rect? rect) {
-    if (rect == null) return null;
-    if (rect.width < 24 || rect.height < 24) {
-      return null;
-    }
-    return rect;
-  }
-
-  Offset _clampOffset(Offset point, Size bounds) {
-    return Offset(
-      point.dx.clamp(0.0, bounds.width),
-      point.dy.clamp(0.0, bounds.height),
-    );
-  }
-
 }

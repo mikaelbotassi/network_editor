@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:network_editor/src/ui/viewmodels/network_editor_snapshot_service.dart';
-import 'package:network_editor/src/ui/widgets/core/alert.dart';
-import 'package:network_editor/src/ui/widgets/snapshot_selector_widgets/selection_painter.dart';
+import 'package:network_editor/src/ui/viewmodels/snapshot_selection_controller.dart';
+import 'package:network_editor/src/ui/widgets/snapshot_selector_widgets/crop_confirm_button.dart';
+import 'package:network_editor/src/ui/widgets/snapshot_selector_widgets/snapshot_select_body.dart';
 import 'package:network_editor/src/ui/widgets/snapshot_selector_widgets/snapshot_selector_appbar.dart';
-import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 class NetworkMapSnapshotSelectorPage extends StatefulWidget {
   const NetworkMapSnapshotSelectorPage({
@@ -21,13 +21,18 @@ class NetworkMapSnapshotSelectorPage extends StatefulWidget {
 class _NetworkMapSnapshotSelectorPageState
     extends State<NetworkMapSnapshotSelectorPage> {
   final _snapshotService = const NetworkEditorSnapshotService();
+  final _selectionController = SnapshotSelectionController();
 
-  Rect? _selectionRect;
-  Offset? _dragStart;
   bool _isCropping = false;
 
+  @override
+  void dispose() {
+    _selectionController.dispose();
+    super.dispose();
+  }
+
   Future<void> _confirmSelection(Size displayedSize) async {
-    final selectionRect = _selectionRect;
+    final selectionRect = _selectionController.selectionRect;
     if (selectionRect == null || _isCropping) {
       return;
     }
@@ -70,113 +75,37 @@ class _NetworkMapSnapshotSelectorPageState
               source: imageSize,
               bounds: Size(constraints.maxWidth, constraints.maxHeight),
             );
-            return Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: RepaintBoundary(
-                      child: SizedBox(
-                        width: fittedSize.width,
-                        height: fittedSize.height,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onPanStart: (details) {
-                            final point = _clampOffset(
-                              details.localPosition,
-                              fittedSize,
-                            );
-                            setState(() {
-                              _dragStart = point;
-                              _selectionRect = Rect.fromLTWH(
-                                point.dx,
-                                point.dy,
-                                0,
-                                0,
-                              );
-                            });
-                          },
-                          onPanUpdate: (details) {
-                            final dragStart = _dragStart;
-                            if (dragStart == null) return;
-
-                            final point = _clampOffset(
-                              details.localPosition,
-                              fittedSize,
-                            );
-                            setState(() {
-                              _selectionRect = Rect.fromPoints(dragStart, point);
-                            });
-                          },
-                          onPanEnd: (_) {
-                            setState(() {
-                              _dragStart = null;
-                              _selectionRect = _normalizeSelection(_selectionRect);
-                            });
-                          },
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              Image.memory(widget.snapshot.bytes, fit: BoxFit.fill),
-                              CustomPaint(
-                                painter: SelectionPainter(
-                                  selectionRect: _selectionRect,
-                                ),
-                              ),
-                              Positioned(
-                                left: 12,
-                                right: 12,
-                                bottom: 12,
-                                child: Alert(
-                                  icon: TablerIcons.infoCircle,
-                                  color: Colors.blue,
-                                  text: 'Arraste para selecionar a parte do mapa que sera usada no editor.'
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+            return ListenableBuilder(
+              listenable: _selectionController,
+              builder: (context, _) => Column(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: SnapshotSelectBody(
+                        size: fittedSize,
+                        image: widget.snapshot.bytes,
+                        controller: _selectionController,
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: _selectionRect == null || _isCropping
-                          ? null
-                          : () => _confirmSelection(fittedSize),
-                      child: _isCropping
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Usar recorte'),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: CropConfirmButton(
+                        enabled:
+                            _selectionController.hasSelection && !_isCropping,
+                        isLoading: _isCropping,
+                        onPressed: () => _confirmSelection(fittedSize),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         ),
       ),
-    );
-  }
-
-  Rect? _normalizeSelection(Rect? rect) {
-    if (rect == null) return null;
-    if (rect.width < 24 || rect.height < 24) {
-      return null;
-    }
-    return rect;
-  }
-
-  Offset _clampOffset(Offset point, Size bounds) {
-    return Offset(
-      point.dx.clamp(0.0, bounds.width),
-      point.dy.clamp(0.0, bounds.height),
     );
   }
 

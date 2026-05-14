@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:network_editor/network_editor.dart';
 import 'package:network_editor/src/domain/enums/network_view.dart';
-import 'package:network_editor/src/ui/viewmodels/network_editor_snapshot_service.dart';
-import 'package:network_editor/src/ui/network_image_editor_page.dart';
 import 'package:network_editor/src/ui/widgets/overlay_items/network_image_editor_buttom.dart';
 import 'package:network_editor/src/ui/widgets/overlay_items/recenter_button.dart';
 import 'package:network_editor/src/ui/widgets/overlay_items/toogle_view_button.dart';
@@ -48,25 +44,10 @@ class NetworkEditorMapView extends StatefulWidget {
 class _NetworkEditorMapViewState extends State<NetworkEditorMapView> {
 
   final GlobalKey _mapCaptureKey = GlobalKey();
-  final _snapshotService = NetworkEditorSnapshotService();
 
-  Future<File?> openMapEditor() async {
-    final originalFile = await _snapshotService.captureToCache(
-      boundaryKey: _mapCaptureKey,
-      fileName: 'map_before_edit.png',
-    );
-
-    if (!mounted) return null;
-
-    final editedFile = await Navigator.of(context).push<File>(
-      MaterialPageRoute(
-        builder: (_) => NetworkImageEditorPage(
-          sourceFile: originalFile,
-        ),
-      ),
-    );
-
-    return editedFile;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override

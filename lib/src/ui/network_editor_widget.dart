@@ -6,7 +6,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:network_editor/src/domain/domain.dart';
 import 'package:network_editor/src/plugins/location_permission_service.dart';
 import 'package:network_editor/src/ui/viewmodels/network_editor_controller.dart';
+import 'package:network_editor/src/ui/viewmodels/network_editor_loader_service.dart';
 import 'package:network_editor/src/ui/viewmodels/network_editor_location_coordinator.dart';
+import 'package:network_editor/src/ui/widgets/network_editor_loader_scope.dart';
 import 'package:network_editor/src/ui/widgets/network_editor_map_view.dart';
 
 class NetworkEditorWidget extends StatefulWidget {
@@ -34,12 +36,15 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
   final LayerHitNotifier<EditorSegment> _segmentHitNotifier = ValueNotifier(null);
 
   late final NetworkEditorLocationCoordinator _locationCoordinator;
+  final NetworkEditorLoaderService _loaderService =
+      const NetworkEditorLoaderService();
 
   NetworkEditorController get controller => widget.controller;
 
   @override
   void initState() {
     super.initState();
+
 
     _locationCoordinator = NetworkEditorLocationCoordinator(
       fallbackCenter: controller.initialCenter,
@@ -57,6 +62,7 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
     if (widget.initCentered) {
       _locationCoordinator.bootstrap();
     }
+
   }
 
   @override
@@ -105,17 +111,20 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
       builder: (context, _) {
         final locationState = _locationCoordinator.state;
 
-        return NetworkEditorMapView(
-          controller: controller,
-          mapController: _mapController,
-          onRecenter: _locationCoordinator.bootstrap,
-          segmentHitNotifier: _segmentHitNotifier,
-          locationGranted: locationState.granted,
-          initialCenter: locationState.center ?? controller.initialCenter,
-          onMapTap: _handleMapTap,
-          onNodeTap: _handleNodeTap,
-          overlayItems: widget.overlayItems,
-          onSave: _handleSave,
+        return NetworkEditorLoaderScope(
+          loaderService: _loaderService,
+          child: NetworkEditorMapView(
+            controller: controller,
+            mapController: _mapController,
+            onRecenter: _locationCoordinator.bootstrap,
+            segmentHitNotifier: _segmentHitNotifier,
+            locationGranted: locationState.granted,
+            initialCenter: locationState.center ?? controller.initialCenter,
+            onMapTap: _handleMapTap,
+            onNodeTap: _handleNodeTap,
+            overlayItems: widget.overlayItems,
+            onSave: _handleSave,
+          ),
         );
       },
     );

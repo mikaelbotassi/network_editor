@@ -97,7 +97,7 @@ packages:
     source: path
     version: "1.0.3"
   electric_shapes:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: electric_shapes
       sha256: "881337c3141455d9eff4c50f5effa15fae430b48135e875f02c125919cb84959"

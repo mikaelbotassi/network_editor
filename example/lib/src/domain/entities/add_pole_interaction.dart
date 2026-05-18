@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:network_editor_example/src/ui/widgets/pole_detail_dialog.dart';
 
 class AddPoleInteraction extends EditorInteractionHandler{
 
@@ -17,6 +18,13 @@ class AddPoleInteraction extends EditorInteractionHandler{
   ) {
     final style = NetworkEditorDefaultMarkerStyles.emerald;
     if(!buildContext.mounted) return SilentInteractionResult();
+    showModalBottomSheet(
+      context: buildContext,
+      builder: (context){
+        return PoleDetailDialog();
+      }
+    );
+    return SilentInteractionResult();
     context.controller.createNode(EditorNode(
       id: UniqueKey().toString(),
       latitude: point.latitude,

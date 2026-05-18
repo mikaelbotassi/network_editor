@@ -99,9 +99,10 @@ packages:
   electric_shapes:
     dependency: transitive
     description:
-      path: "../../electric_shapes"
-      relative: true
-    source: path
+      name: electric_shapes
+      sha256: "881337c3141455d9eff4c50f5effa15fae430b48135e875f02c125919cb84959"
+      url: "https://pub.dev"
+    source: hosted
     version: "1.0.11"
   equatable:
     dependency: transitive

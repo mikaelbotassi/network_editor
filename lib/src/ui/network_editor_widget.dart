@@ -10,6 +10,7 @@ import 'package:network_editor/src/ui/viewmodels/network_editor_loader_service.d
 import 'package:network_editor/src/ui/viewmodels/network_editor_location_coordinator.dart';
 import 'package:network_editor/src/ui/widgets/network_editor_loader_scope.dart';
 import 'package:network_editor/src/ui/widgets/network_editor_map_view.dart';
+import 'package:smre_network_client/smre_network_client.dart' as hub;
 
 class NetworkEditorWidget extends StatefulWidget {
   const NetworkEditorWidget({
@@ -17,6 +18,10 @@ class NetworkEditorWidget extends StatefulWidget {
     required this.controller,
     this.initCentered = true,
     this.overlayItems = const [],
+    this.showHubNetwork = true,
+    this.initialVisibleNetworkLayers,
+    this.networkClient,
+    this.onNetworkFeatureTap,
     this.onInteraction,
     this.onSave,
   });
@@ -24,6 +29,10 @@ class NetworkEditorWidget extends StatefulWidget {
   final bool initCentered;
   final NetworkEditorController controller;
   final List<Widget> overlayItems;
+  final bool showHubNetwork;
+  final Set<hub.NetworkLayer>? initialVisibleNetworkLayers;
+  final hub.SmreNetworkClient? networkClient;
+  final ValueChanged<hub.NetworkFeature>? onNetworkFeatureTap;
   final FutureOr<void> Function(NetworkInteractionResult result)? onInteraction;
   final ValueChanged<NetworkEditorResult>? onSave;
 
@@ -33,7 +42,9 @@ class NetworkEditorWidget extends StatefulWidget {
 
 class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
   final MapController _mapController = MapController();
-  final LayerHitNotifier<EditorSegment> _segmentHitNotifier = ValueNotifier(null);
+  final LayerHitNotifier<EditorSegment> _segmentHitNotifier = ValueNotifier(
+    null,
+  );
 
   late final NetworkEditorLocationCoordinator _locationCoordinator;
   final NetworkEditorLoaderService _loaderService =
@@ -44,7 +55,6 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
   @override
   void initState() {
     super.initState();
-
 
     _locationCoordinator = NetworkEditorLocationCoordinator(
       fallbackCenter: controller.initialCenter,
@@ -62,7 +72,6 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
     if (widget.initCentered) {
       _locationCoordinator.bootstrap();
     }
-
   }
 
   @override
@@ -75,8 +84,8 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
   }
 
   Future<void> _emitInteraction(
-      Future<NetworkInteractionResult> Function(BuildContext) action,
-      ) async {
+    Future<NetworkInteractionResult> Function(BuildContext) action,
+  ) async {
     final result = await action(context);
     await widget.onInteraction?.call(result);
   }
@@ -87,17 +96,24 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
 
     final segment = hit.hitValues.first;
 
-    await _emitInteraction((BuildContext context) => controller.handleSegmentTap(context, segment));
+    await _emitInteraction(
+      (BuildContext context) => controller.handleSegmentTap(context, segment),
+    );
 
     _segmentHitNotifier.value = null;
   }
 
   Future<void> _handleMapTap(TapPosition tapPosition, LatLng point) {
-    return _emitInteraction((BuildContext context) => controller.handleMapTap(context, tapPosition, point));
+    return _emitInteraction(
+      (BuildContext context) =>
+          controller.handleMapTap(context, tapPosition, point),
+    );
   }
 
   Future<void> _handleNodeTap(EditorNode node) {
-    return _emitInteraction((BuildContext context) => controller.handleNodeTap(context, node));
+    return _emitInteraction(
+      (BuildContext context) => controller.handleNodeTap(context, node),
+    );
   }
 
   void _handleSave() {
@@ -123,6 +139,10 @@ class _NetworkEditorWidgetState extends State<NetworkEditorWidget> {
             onMapTap: _handleMapTap,
             onNodeTap: _handleNodeTap,
             overlayItems: widget.overlayItems,
+            showHubNetwork: widget.showHubNetwork,
+            initialVisibleNetworkLayers: widget.initialVisibleNetworkLayers,
+            networkClient: widget.networkClient,
+            onNetworkFeatureTap: widget.onNetworkFeatureTap,
             onSave: _handleSave,
           ),
         );

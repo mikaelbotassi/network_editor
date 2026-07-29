@@ -1,42 +1,59 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Network Editor
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+Pacote Flutter para visualizar e editar redes sobre `flutter_map`. No Android,
+as estruturas corporativas são consultadas offline no SMRE Hub por meio do
+`smre_network_client`.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+## Rede do SMRE Hub
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+O editor consulta somente os tiles XYZ do viewport visível. A câmera possui
+debounce de 180 ms, respostas de viewports antigos são ignoradas e features que
+atravessam mais de um tile são deduplicadas.
 
-## Features
+As camadas respeitam os zooms mínimos definidos pelo Hub:
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+| Camada | Zoom mínimo |
+|---|---:|
+| Rede primária | 11 |
+| Rede secundária | 14 |
+| Transformadores, seccionadoras, capacitores, reguladores e medição | 15 |
+| Postes | 17 |
 
-## Getting started
+Linhas e pontos do Hub são desenhados em Canvas. Os nós e segmentos editáveis
+continuam sendo renderizados por cima dessas estruturas de referência.
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+## Requisitos Android
 
-## Usage
+- SMRE Hub instalado e com as camadas sincronizadas.
+- Aplicativo consumidor e Hub assinados pelo mesmo certificado.
+- Android API 24 ou superior.
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+O manifesto do cliente adiciona automaticamente a permissão
+`com.elfsm.smre_hub.permission.READ_NETWORK_DATA`.
+
+## Uso
 
 ```dart
-const like = 'sample';
+final controller = NetworkEditorController(
+  initialCenter: const LatLng(-19.5356, -40.6306),
+  initialZoom: 17,
+  initialValue: const NetworkEditorValue(),
+);
+
+NetworkEditorWidget(
+  controller: controller,
+  showHubNetwork: true,
+  initialVisibleNetworkLayers: {
+    NetworkLayer.redePrimaria,
+    NetworkLayer.poste,
+    NetworkLayer.transformador,
+  },
+  onNetworkFeatureTap: (feature) {
+    print('${feature.layer.name}: ${feature.title ?? feature.id}');
+  },
+);
 ```
 
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
-
-## License
-MIT
+`showHubNetwork` é `true` por padrão. O botão de camadas no canto superior
+direito permite habilitar ou ocultar cada tipo de estrutura em tempo de
+execução.

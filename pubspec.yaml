@@ -1,7 +1,8 @@
 name: network_editor
 description: "Flutter package for editing network maps with nodes and segments."
-version: 0.0.1
+version: 0.1.0
 homepage:
+publish_to: none
 
 environment:
   sdk: ^3.11.0
@@ -22,6 +23,8 @@ dependencies:
   electric_shapes: ^1.0.11
   electric_digital_sketch:
     path: ../electric_digital_sketch
+  smre_network_client:
+    path: ../../../../../__ELFSM/network_data_hub/frontend/packages/smre_network_client
 
 dev_dependencies:
   flutter_test:

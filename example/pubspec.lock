@@ -95,7 +95,7 @@ packages:
       path: "../../electric_digital_sketch"
       relative: true
     source: path
-    version: "1.0.3"
+    version: "1.1.0"
   electric_shapes:
     dependency: "direct main"
     description:
@@ -438,10 +438,10 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"
+      sha256: "1741988757a65eb6b36abe716829688cf01910bbf91c34354ff7ec1c3de2b349"
       url: "https://pub.dev"
     source: hosted
-    version: "1.17.0"
+    version: "1.18.0"
   mgrs_dart:
     dependency: transitive
     description:
@@ -585,14 +585,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.2"
-  phosphor_flutter:
+  phosphoricons_flutter:
     dependency: transitive
     description:
-      name: phosphor_flutter
-      sha256: "8a14f238f28a0b54842c5a4dc20676598dd4811fcba284ed828bd5a262c11fde"
+      name: phosphoricons_flutter
+      sha256: "34e4a00cc1a4be87c60edfcfcd5de23c005dc69945a5d77e08d33e6d23c0e793"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "1.0.0"
   platform:
     dependency: transitive
     description:

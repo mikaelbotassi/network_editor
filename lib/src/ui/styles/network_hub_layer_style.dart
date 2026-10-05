@@ -1,3 +1,4 @@
+import 'package:electric_shapes/electric_shapes.dart';
 import 'package:flutter/material.dart';
 import 'package:smre_network_client/smre_network_client.dart' as hub;
 
@@ -25,10 +26,10 @@ extension NetworkHubLayerStyle on hub.NetworkLayer {
   };
 
   IconData get icon => switch (this) {
-    hub.NetworkLayer.redePrimaria => Icons.account_tree_outlined,
-    hub.NetworkLayer.redeSecundaria => Icons.cable_outlined,
-    hub.NetworkLayer.poste => Icons.signpost_outlined,
-    hub.NetworkLayer.transformador => Icons.electric_bolt_outlined,
+    hub.NetworkLayer.redePrimaria => ElectricIcons.redeMediaTensaoExistente,
+    hub.NetworkLayer.redeSecundaria => ElectricIcons.redeBaixaTensaoExistente,
+    hub.NetworkLayer.poste => ElectricIcons.posteConcretoCircularExistente,
+    hub.NetworkLayer.transformador => ElectricIcons.transformadorExistente,
     hub.NetworkLayer.seccionadora => Icons.power_settings_new_outlined,
     hub.NetworkLayer.capacitora => Icons.battery_charging_full_outlined,
     hub.NetworkLayer.reguladora => Icons.tune_outlined,

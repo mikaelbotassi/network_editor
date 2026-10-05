@@ -2,40 +2,37 @@ import 'dart:async';
 
 import 'package:network_editor/network_editor.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:network_editor_example/src/ui/widgets/pole_detail_dialog.dart';
 
-class AddPoleInteraction extends EditorInteractionHandler{
-
+class AddPoleInteraction extends EditorInteractionHandler {
   @override
   FutureOr<NetworkInteractionResult> onMapTap(
     EditorInteractionContext context,
     BuildContext buildContext,
     TapPosition tapPosition,
-    LatLng point
+    LatLng point,
   ) {
     final style = NetworkEditorDefaultMarkerStyles.emerald;
-    if(!buildContext.mounted) return SilentInteractionResult();
+    if (!buildContext.mounted) return SilentInteractionResult();
     showModalBottomSheet(
       context: buildContext,
-      builder: (context){
+      builder: (context) {
         return PoleDetailDialog();
-      }
+      },
     );
     return SilentInteractionResult();
-    context.controller.createNode(EditorNode(
-      id: UniqueKey().toString(),
-      latitude: point.latitude,
-      longitude: point.longitude,
-      color: style.fillColor,
-      groupId: 'pole',
-      svgPath: 'assets/icons/poste-terra.svg'
-    ));
+    context.controller.createNode(
+      EditorNode(
+        id: UniqueKey().toString(),
+        latitude: point.latitude,
+        longitude: point.longitude,
+        color: style.fillColor,
+        groupId: 'pole',
+        svgPath: 'assets/icons/poste-terra.svg',
+      ),
+    );
     return SilentInteractionResult();
-
   }
-
-
 }

@@ -1,5 +1,6 @@
 import 'package:electric_shapes/electric_shapes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:smre_network_client/smre_network_client.dart' as hub;
 
 extension NetworkHubLayerStyle on hub.NetworkLayer {
@@ -51,5 +52,10 @@ extension NetworkHubLayerStyle on hub.NetworkLayer {
   double get pointRadius => switch (this) {
     hub.NetworkLayer.poste => 3.5,
     _ => 5.5,
+  };
+
+  StrokePattern get strokePattern => switch (this) {
+    hub.NetworkLayer.redePrimaria => StrokePattern.dashed(segments: const [8, 6]),
+    _ => const StrokePattern.solid(),
   };
 }

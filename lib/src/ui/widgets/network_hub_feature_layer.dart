@@ -31,6 +31,7 @@ class NetworkHubFeatureLayer extends StatelessWidget {
               ],
               color: feature.layer.mapColor,
               strokeWidth: feature.layer.lineWidth,
+              pattern: feature.layer.strokePattern,
               hitValue: feature,
             ),
           );

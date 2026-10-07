@@ -26,7 +26,7 @@ class _NetworkHubLayerControlState extends State<NetworkHubLayerControl> {
       color: colors.surfaceContainerLowest,
       borderRadius: BorderRadius.circular(4),
       child: Container(
-        width: _expanded ? 228 : 48,
+        width: _expanded ? 240 : 48,
         constraints: BoxConstraints(
           maxHeight: availableHeight.clamp(160, 430).toDouble(),
         ),

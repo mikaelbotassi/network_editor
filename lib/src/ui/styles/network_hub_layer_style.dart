@@ -30,10 +30,16 @@ extension NetworkHubLayerStyle on hub.NetworkLayer {
     hub.NetworkLayer.redeSecundaria => ElectricIcons.redeBaixaTensaoExistente,
     hub.NetworkLayer.poste => ElectricIcons.posteConcretoCircularExistente,
     hub.NetworkLayer.transformador => ElectricIcons.transformadorExistente,
-    hub.NetworkLayer.seccionadora => Icons.power_settings_new_outlined,
-    hub.NetworkLayer.capacitora => Icons.battery_charging_full_outlined,
-    hub.NetworkLayer.reguladora => Icons.tune_outlined,
+    hub.NetworkLayer.seccionadora => ElectricIcons.chaveFusivelExistente,
+    hub.NetworkLayer.capacitora => ElectricIcons.capacitora,
+    hub.NetworkLayer.reguladora => ElectricIcons.reguladoraExistente,
     hub.NetworkLayer.conjuntoMedicao => Icons.speed_outlined,
+  };
+
+  double get iconSize => switch (this) {
+    hub.NetworkLayer.capacitora => 26.0,
+    hub.NetworkLayer.reguladora => 26.0,
+    _ => 18.0,
   };
 
   double get lineWidth => switch (this) {

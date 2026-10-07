@@ -24,10 +24,19 @@ class LayerOption extends StatelessWidget {
       visualDensity: VisualDensity.compact,
       controlAffinity: ListTileControlAffinity.leading,
       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-      secondary: Icon(
-        layer.icon,
-        size: 18,
-        color: activeAtZoom ? layer.mapColor : colors.outline,
+      secondary: SizedBox(
+        width: 28,
+        height: 24,
+        child: Center(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Icon(
+              layer.icon,
+              size: layer.iconSize,
+              color: activeAtZoom ? layer.mapColor : colors.outline,
+            ),
+          ),
+        ),
       ),
       title: Text(
         layer.label,

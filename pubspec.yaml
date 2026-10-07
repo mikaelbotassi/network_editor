@@ -11,16 +11,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_map: ^8.3.0
+  flutter_map: ^8.3.2
   latlong2: ^0.9.1
   flutter_map_location_marker: ^10.2.0
-  tabler_icons_plus: ^3.44.0
+  tabler_icons_plus: ^3.49.0
   result_dart: ^2.2.0
   flutter_svg: ^2.3.0
   geolocator: ^14.0.2
   simple_painter: ^1.4.0
-  path_provider: ^2.1.5
-  electric_shapes: ^1.0.11
+  path_provider: ^2.1.6
+  electric_shapes: ^1.1.1
   electric_digital_sketch:
     path: ../electric_digital_sketch
   smre_network_client:

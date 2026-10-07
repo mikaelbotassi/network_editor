@@ -102,8 +102,12 @@ class _NetworkEditorMapViewState extends State<NetworkEditorMapView> {
   void _handleNetworkFeatureHit() {
     final hit = _networkFeatureHitNotifier.value;
     if (hit == null || hit.hitValues.isEmpty) return;
-    widget.onNetworkFeatureTap?.call(hit.hitValues.first);
+    _onFeatureTap(hit.hitValues.first);
     _networkFeatureHitNotifier.value = null;
+  }
+
+  void _onFeatureTap(hub.NetworkFeature feature) {
+    widget.onNetworkFeatureTap?.call(feature);
   }
 
   void _handleMapReady() {
@@ -186,6 +190,7 @@ class _NetworkEditorMapViewState extends State<NetworkEditorMapView> {
                     hitNotifier: widget.onNetworkFeatureTap == null
                         ? null
                         : _networkFeatureHitNotifier,
+                    onFeatureTap: _onFeatureTap,
                   ),
                 PolylineLayer<EditorSegment>(
                   polylines: widget.controller.buildPolylines(),

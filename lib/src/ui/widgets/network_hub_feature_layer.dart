@@ -1,7 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:network_editor/src/domain/entities/editor_node.dart';
 import 'package:network_editor/src/ui/styles/network_hub_layer_style.dart';
+import 'package:network_editor/src/ui/widgets/node_marker_widget.dart';
 import 'package:smre_network_client/smre_network_client.dart' as hub;
 
 class NetworkHubFeatureLayer extends StatelessWidget {
@@ -9,15 +11,17 @@ class NetworkHubFeatureLayer extends StatelessWidget {
     super.key,
     required this.features,
     this.hitNotifier,
+    this.onFeatureTap,
   });
 
   final List<hub.NetworkFeature> features;
   final LayerHitNotifier<hub.NetworkFeature>? hitNotifier;
+  final ValueChanged<hub.NetworkFeature>? onFeatureTap;
 
   @override
   Widget build(BuildContext context) {
     final lines = <Polyline<hub.NetworkFeature>>[];
-    final points = <CircleMarker<hub.NetworkFeature>>[];
+    final markers = <Marker>[];
 
     for (final feature in features) {
       switch (feature.geometry) {
@@ -36,17 +40,33 @@ class NetworkHubFeatureLayer extends StatelessWidget {
             ),
           );
         case final hub.NetworkPointGeometry geometry:
-          points.add(
-            CircleMarker(
+          final node = EditorNode(
+            id: '${feature.layer.code}_${feature.id}',
+            latitude: geometry.coordinate.latitude,
+            longitude: geometry.coordinate.longitude,
+            icon: feature.layer.icon,
+            color: feature.layer.mapColor,
+            label: feature.title ?? feature.layer.label,
+            properties: feature.properties,
+          );
+
+          markers.add(
+            Marker(
               point: LatLng(
                 geometry.coordinate.latitude,
                 geometry.coordinate.longitude,
               ),
-              radius: feature.layer.pointRadius,
-              color: feature.layer.mapColor,
-              borderColor: const Color(0xFFFFFFFF),
-              borderStrokeWidth: 1.2,
-              hitValue: feature,
+              width: 36,
+              height: 36,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => onFeatureTap?.call(feature),
+                child: NodeMarkerWidget(
+                  node: node,
+                  selected: false,
+                  iconSize: feature.layer.iconSize,
+                ),
+              ),
             ),
           );
       }
@@ -59,10 +79,9 @@ class NetworkHubFeatureLayer extends StatelessWidget {
             polylines: lines,
             hitNotifier: hitNotifier,
           ),
-        if (points.isNotEmpty)
-          CircleLayer<hub.NetworkFeature>(
-            circles: points,
-            hitNotifier: hitNotifier,
+        if (markers.isNotEmpty)
+          MarkerLayer(
+            markers: markers,
           ),
       ],
     );

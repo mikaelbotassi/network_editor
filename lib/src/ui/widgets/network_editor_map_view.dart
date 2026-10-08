@@ -108,6 +108,7 @@ class _NetworkEditorMapViewState extends State<NetworkEditorMapView> {
 
   void _onFeatureTap(hub.NetworkFeature feature) {
     widget.onNetworkFeatureTap?.call(feature);
+    NodeDetailsBottomSheet.showFeatureDetails(context, feature: feature);
   }
 
   void _handleMapReady() {
@@ -198,7 +199,12 @@ class _NetworkEditorMapViewState extends State<NetworkEditorMapView> {
                 ),
                 MarkerLayer(
                   markers: widget.controller.buildMarkers(
-                    onTapNode: widget.onNodeTap,
+                    onTapNode: (node) async {
+                      await widget.onNodeTap(node);
+                      if (context.mounted) {
+                        await NodeDetailsBottomSheet.show(context, node: node);
+                      }
+                    },
                   ),
                 ),
               ],

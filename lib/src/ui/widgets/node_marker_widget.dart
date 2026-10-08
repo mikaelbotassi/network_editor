@@ -23,8 +23,8 @@ class NodeMarkerWidget extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          width: 36,
-          height: 36,
+          width: 38,
+          height: 38,
           decoration: BoxDecoration(
             color: mainColor,
             shape: BoxShape.circle,
@@ -48,7 +48,7 @@ class NodeMarkerWidget extends StatelessWidget {
             ),
           ),
         ),
-        if (structuresCount > 0)
+        if (structuresCount > 1)
           Positioned(
             top: -2,
             right: -2,
@@ -79,7 +79,16 @@ class NodeMarkerWidget extends StatelessWidget {
     return 0;
   }
 
-  Widget _buildMarkerContent(Color color) {
+  Widget _buildMarkerContent(Color defaultColor) {
+    final rawIcons = node.properties['grouped_icons'];
+    final rawColors = node.properties['grouped_colors'];
+
+    if (rawIcons is List && rawColors is List && rawIcons.length > 1) {
+      final icons = rawIcons.cast<IconData>();
+      final colors = rawColors.cast<Color>();
+      return _buildMultiIconContent(icons, colors);
+    }
+
     if (node.svgPath != null && node.svgPath!.trim().isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.all(2),
@@ -88,7 +97,7 @@ class NodeMarkerWidget extends StatelessWidget {
           width: iconSize,
           height: iconSize,
           colorFilter: ColorFilter.mode(
-            color,
+            defaultColor,
             BlendMode.srcIn,
           ),
         ),
@@ -97,8 +106,57 @@ class NodeMarkerWidget extends StatelessWidget {
 
     return Icon(
       node.icon,
-      color: color,
+      color: defaultColor,
       size: iconSize,
+    );
+  }
+
+  Widget _buildMultiIconContent(List<IconData> icons, List<Color> colors) {
+    if (icons.length == 2) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icons[0], size: 11, color: colors[0]),
+          const SizedBox(width: 1),
+          Icon(icons[1], size: 11, color: colors[1]),
+        ],
+      );
+    }
+
+    final displayIcons = icons.take(4).toList();
+    final displayColors = colors.take(4).toList();
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(displayIcons[0], size: 9, color: displayColors[0]),
+            if (displayIcons.length > 1) ...[
+              const SizedBox(width: 1),
+              Icon(displayIcons[1], size: 9, color: displayColors[1]),
+            ],
+          ],
+        ),
+        if (displayIcons.length > 2) ...[
+          const SizedBox(height: 1),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(displayIcons[2], size: 9, color: displayColors[2]),
+              if (displayIcons.length > 3) ...[
+                const SizedBox(width: 1),
+                Icon(displayIcons[3], size: 9, color: displayColors[3]),
+              ],
+            ],
+          ),
+        ],
+      ],
     );
   }
 }

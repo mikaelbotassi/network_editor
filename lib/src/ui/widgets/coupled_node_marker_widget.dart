@@ -28,7 +28,6 @@ class CoupledSatelliteItem {
 /// Representation of the central support node (e.g. pole or primary structure).
 class CoupledCenterNode {
   const CoupledCenterNode({
-    this.isPole = true,
     this.color = const Color(0xFF384654),
     this.icon,
     this.title,
@@ -36,7 +35,6 @@ class CoupledCenterNode {
     this.onTap,
   });
 
-  final bool isPole;
   final Color color;
   final IconData? icon;
   final String? title;
@@ -97,7 +95,6 @@ class CoupledNodeMarkerWidget extends StatelessWidget {
 
     if (pole != null) {
       centerNode = CoupledCenterNode(
-        isPole: true,
         icon: pole.icon,
         color: selected ? Colors.orange : pole.layer.mapColor,
         title: pole.title ?? '${pole.layer.label} #${pole.id}',
@@ -111,7 +108,6 @@ class CoupledNodeMarkerWidget extends StatelessWidget {
     } else if (features.length == 1) {
       final single = features.first;
       centerNode = CoupledCenterNode(
-        isPole: false,
         color: selected ? Colors.orange : single.layer.mapColor,
         icon: single.icon,
         title: single.title ?? '${single.layer.label} #${single.id}',
@@ -123,7 +119,6 @@ class CoupledNodeMarkerWidget extends StatelessWidget {
       // Group without explicit pole feature: the center represents the support node
       final primary = features.first;
       centerNode = CoupledCenterNode(
-        isPole: true,
         color: selected ? Colors.orange : const Color(0xFF384654),
         title: primary.title ?? 'Ponto #${primary.id}',
         feature: primary,
@@ -169,10 +164,8 @@ class CoupledNodeMarkerWidget extends StatelessWidget {
 
     final rawIcons = node.properties['grouped_icons'];
     final rawColors = node.properties['grouped_colors'];
-    final hasPole = node.properties['has_pole'] == true;
 
     final centerNode = CoupledCenterNode(
-      isPole: hasPole,
       color: selected ? Colors.orange : node.color,
       icon: node.icon,
       title: node.label ?? 'Nó #${node.id}',
@@ -306,7 +299,6 @@ class CoupledNodeMarkerWidget extends StatelessWidget {
 
   Widget _buildCenterWidget(double size) {
     final strokeWidth = size * 0.11;
-    final innerSize = size * 0.46;
     final color = center.color;
 
     Widget content = Container(
@@ -325,21 +317,11 @@ class CoupledNodeMarkerWidget extends StatelessWidget {
         ],
       ),
       child: Center(
-        child: center.isPole
-            ? Container(
-                width: innerSize,
-                height: innerSize,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: color, width: strokeWidth),
-                ),
-              )
-            : Icon(
-                center.icon ?? Icons.circle,
-                color: color,
-                size: size * 0.55,
-              ),
+        child: Icon(
+          center.icon ?? Icons.circle,
+          color: color,
+          size: size * 0.55,
+        ),
       ),
     );
 

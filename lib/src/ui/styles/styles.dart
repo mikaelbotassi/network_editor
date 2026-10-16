@@ -3,4 +3,4 @@ export 'marker_styles.dart';
 export 'segment_styles.dart';
 export 'style_models.dart';
 export 'network_editor_shadows.dart';
-export 'network_hub_layer_style.dart';
+export 'network_hub/network_hub_layer_style.dart';

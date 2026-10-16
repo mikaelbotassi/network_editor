@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:network_editor/src/domain/entities/editor_node.dart';
-import 'package:network_editor/src/ui/styles/network_hub_layer_style.dart';
+import 'package:network_editor/src/ui/styles/network_hub/network_hub_layer_style.dart';
 import 'package:smre_network_client/smre_network_client.dart' as hub;
 
 class NodeDetailsBottomSheet extends StatelessWidget {
-  const NodeDetailsBottomSheet({
-    super.key,
-    this.node,
-    this.feature,
-  }) : assert(node != null || feature != null, 'node ou feature deve ser fornecido');
+  const NodeDetailsBottomSheet({super.key, this.node, this.feature})
+    : assert(
+        node != null || feature != null,
+        'node ou feature deve ser fornecido',
+      );
 
   final EditorNode? node;
   final hub.NetworkFeature? feature;
 
-  static Future<void> show(
-    BuildContext context, {
-    required EditorNode node,
-  }) {
+  static Future<void> show(BuildContext context, {required EditorNode node}) {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -121,11 +118,7 @@ class NodeDetailsBottomSheet extends StatelessWidget {
                                   BlendMode.srcIn,
                                 ),
                               )
-                            : Icon(
-                                iconData,
-                                color: mainColor,
-                                size: 22,
-                              ),
+                            : Icon(iconData, color: mainColor, size: 22),
                       ),
                     ),
                   ),
@@ -179,7 +172,9 @@ class NodeDetailsBottomSheet extends StatelessWidget {
                         if (node != null) ...[
                           _BadgeChip(
                             label: node!.isNew ? 'Novo' : 'Existente',
-                            icon: node!.isNew ? Icons.add_circle_outline : Icons.check_circle_outline,
+                            icon: node!.isNew
+                                ? Icons.add_circle_outline
+                                : Icons.check_circle_outline,
                             color: node!.isNew ? Colors.green : Colors.blue,
                           ),
                           if (node!.groupId != null)
@@ -280,7 +275,11 @@ class NodeDetailsBottomSheet extends StatelessWidget {
     final rawProps = node?.properties ?? feature?.properties ?? {};
     final map = <String, dynamic>{};
     for (final entry in rawProps.entries) {
-      if (entry.key == 'structures' || entry.key == 'estruturas' || entry.key == 'grouped_icons' || entry.key == 'grouped_colors') continue;
+      if (entry.key == 'structures' ||
+          entry.key == 'estruturas' ||
+          entry.key == 'grouped_icons' ||
+          entry.key == 'grouped_colors')
+        continue;
       map[entry.key] = entry.value;
     }
     return map;
@@ -298,7 +297,11 @@ class NodeDetailsBottomSheet extends StatelessWidget {
     return [];
   }
 
-  Widget _buildSectionHeader(BuildContext context, {required String title, required IconData icon}) {
+  Widget _buildSectionHeader(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+  }) {
     final theme = Theme.of(context);
     return Row(
       children: [
@@ -317,8 +320,20 @@ class NodeDetailsBottomSheet extends StatelessWidget {
 
   Widget _buildCoordinatesCard(BuildContext context) {
     final theme = Theme.of(context);
-    final lat = node?.latitude ?? (feature?.geometry is hub.NetworkPointGeometry ? (feature!.geometry as hub.NetworkPointGeometry).coordinate.latitude : 0.0);
-    final lng = node?.longitude ?? (feature?.geometry is hub.NetworkPointGeometry ? (feature!.geometry as hub.NetworkPointGeometry).coordinate.longitude : 0.0);
+    final lat =
+        node?.latitude ??
+        (feature?.geometry is hub.NetworkPointGeometry
+            ? (feature!.geometry as hub.NetworkPointGeometry)
+                  .coordinate
+                  .latitude
+            : 0.0);
+    final lng =
+        node?.longitude ??
+        (feature?.geometry is hub.NetworkPointGeometry
+            ? (feature!.geometry as hub.NetworkPointGeometry)
+                  .coordinate
+                  .longitude
+            : 0.0);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -334,12 +349,16 @@ class NodeDetailsBottomSheet extends StatelessWidget {
               children: [
                 Text(
                   'Coordenadas (Lat, Lng)',
-                  style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.outline),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.outline,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   '${lat.toStringAsFixed(6)}, ${lng.toStringAsFixed(6)}',
-                  style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -349,7 +368,10 @@ class NodeDetailsBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildPropertiesCard(BuildContext context, Map<String, dynamic> properties) {
+  Widget _buildPropertiesCard(
+    BuildContext context,
+    Map<String, dynamic> properties,
+  ) {
     final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
@@ -387,16 +409,29 @@ class NodeDetailsBottomSheet extends StatelessWidget {
               ),
             ),
             if (entry.key != properties.keys.last)
-              Divider(height: 1, color: theme.colorScheme.outlineVariant.withAlpha(50)),
+              Divider(
+                height: 1,
+                color: theme.colorScheme.outlineVariant.withAlpha(50),
+              ),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildStructureCard(BuildContext context, Map<String, dynamic> structure) {
+  Widget _buildStructureCard(
+    BuildContext context,
+    Map<String, dynamic> structure,
+  ) {
     final theme = Theme.of(context);
-    final name = structure['title'] ?? structure['name'] ?? structure['nome'] ?? structure['type'] ?? structure['tipo'] ?? structure['layer'] ?? 'Estrutura';
+    final name =
+        structure['title'] ??
+        structure['name'] ??
+        structure['nome'] ??
+        structure['type'] ??
+        structure['tipo'] ??
+        structure['layer'] ??
+        'Estrutura';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -404,14 +439,20 @@ class NodeDetailsBottomSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: theme.colorScheme.outlineVariant.withAlpha(100)),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withAlpha(100),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.inventory_2_outlined, size: 16, color: theme.colorScheme.primary),
+              Icon(
+                Icons.inventory_2_outlined,
+                size: 16,
+                color: theme.colorScheme.primary,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -425,7 +466,12 @@ class NodeDetailsBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           for (final entry in structure.entries)
-            if (entry.key != 'title' && entry.key != 'name' && entry.key != 'nome' && entry.key != 'type' && entry.key != 'tipo' && entry.key != 'layer')
+            if (entry.key != 'title' &&
+                entry.key != 'name' &&
+                entry.key != 'nome' &&
+                entry.key != 'type' &&
+                entry.key != 'tipo' &&
+                entry.key != 'layer')
               Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: Row(
@@ -433,11 +479,15 @@ class NodeDetailsBottomSheet extends StatelessWidget {
                   children: [
                     Text(
                       _formatKey(entry.key),
-                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.outline,
+                      ),
                     ),
                     Text(
                       '${entry.value}',
-                      style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -451,7 +501,11 @@ class NodeDetailsBottomSheet extends StatelessWidget {
     return key
         .replaceAll('_', ' ')
         .split(' ')
-        .map((word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '')
+        .map(
+          (word) => word.isNotEmpty
+              ? '${word[0].toUpperCase()}${word.substring(1)}'
+              : '',
+        )
         .join(' ');
   }
 }

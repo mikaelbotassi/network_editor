@@ -55,7 +55,9 @@ extension NetworkHubLayerStyle on hub.NetworkLayer {
   };
 
   StrokePattern get strokePattern => switch (this) {
-    hub.NetworkLayer.redePrimaria => StrokePattern.dashed(segments: const [8, 6]),
+    hub.NetworkLayer.redePrimaria => StrokePattern.dashed(
+      segments: const [8, 6],
+    ),
     _ => const StrokePattern.solid(),
   };
 }

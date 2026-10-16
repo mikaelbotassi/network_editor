@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:network_editor/src/domain/entities/editor_node.dart';
-import 'package:network_editor/src/ui/styles/network_hub_layer_style.dart';
-import 'package:network_editor/src/ui/widgets/node_marker_widget.dart';
+import 'package:network_editor/src/ui/styles/network_hub/network_hub_layer_style.dart';
+import 'package:network_editor/src/ui/widgets/coupled_node_marker_widget.dart';
 import 'package:smre_network_client/smre_network_client.dart' as hub;
 
 class NetworkHubFeatureLayer extends StatelessWidget {
@@ -48,22 +47,18 @@ class NetworkHubFeatureLayer extends StatelessWidget {
     final markers = <Marker>[];
 
     for (final group in groups) {
-      final node = group.toEditorNode();
-      final primaryFeature = group.primaryFeature;
+      final markerSize = group.markerSize;
 
       markers.add(
         Marker(
           point: group.coordinate,
-          width: 38,
-          height: 38,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => onFeatureTap?.call(primaryFeature),
-            child: NodeMarkerWidget(
-              node: node,
-              selected: false,
-              iconSize: 16,
-            ),
+          width: markerSize,
+          height: markerSize,
+          alignment: Alignment.center,
+          child: CoupledNodeMarkerWidget.fromFeatures(
+            features: group.features,
+            onFeatureTap: onFeatureTap,
+            selected: false,
           ),
         ),
       );
@@ -76,15 +71,14 @@ class NetworkHubFeatureLayer extends StatelessWidget {
             polylines: lines,
             hitNotifier: hitNotifier,
           ),
-        if (markers.isNotEmpty)
-          MarkerLayer(
-            markers: markers,
-          ),
+        if (markers.isNotEmpty) MarkerLayer(markers: markers),
       ],
     );
   }
 
-  List<_PointFeatureGroup> _groupPointFeatures(List<hub.NetworkFeature> pointFeatures) {
+  List<_PointFeatureGroup> _groupPointFeatures(
+    List<hub.NetworkFeature> pointFeatures,
+  ) {
     final groupsMap = <String, _PointFeatureGroup>{};
 
     for (final feature in pointFeatures) {
@@ -118,7 +112,8 @@ class NetworkHubFeatureLayer extends StatelessWidget {
 
   static String? _extractPontoScId(hub.NetworkFeature feature) {
     final props = feature.properties;
-    final val = props['idPontoSc'] ??
+    final val =
+        props['idPontoSc'] ??
         props['id_ponto_sc'] ??
         props['idPontoSC'] ??
         props['id_ponto'] ??
@@ -151,47 +146,16 @@ class _PointFeatureGroup {
     return features.first;
   }
 
-  EditorNode toEditorNode() {
-    final primary = primaryFeature;
+  bool get hasCouplings => features.length > 1;
+
+  double get markerSize {
     final pole = features.cast<hub.NetworkFeature?>().firstWhere(
       (f) => f?.layer == hub.NetworkLayer.poste,
       orElse: () => null,
     );
-
-    final icons = <IconData>[];
-    final colors = <Color>[];
-    final structuresList = <Map<String, dynamic>>[];
-
-    for (final f in features) {
-      icons.add(f.layer.icon);
-      colors.add(f.layer.mapColor);
-      structuresList.add({
-        'id': f.id,
-        'layer': f.layer.label,
-        'layer_code': f.layer.code,
-        'title': f.title ?? f.layer.label,
-        'subtitle': f.subtitle,
-        ...f.properties,
-      });
-    }
-
-    final mainColor = pole != null ? pole.layer.mapColor : primary.layer.mapColor;
-    final mainIcon = pole != null ? pole.layer.icon : primary.layer.icon;
-
-    return EditorNode(
-      id: key,
-      latitude: coordinate.latitude,
-      longitude: coordinate.longitude,
-      icon: mainIcon,
-      color: mainColor,
-      label: primary.title ?? primary.layer.label,
-      properties: {
-        'structures': structuresList,
-        'grouped_icons': icons,
-        'grouped_colors': colors,
-        'has_pole': pole != null,
-        ...primary.properties,
-      },
-    );
+    final satelliteCount = pole != null
+        ? features.where((f) => f != pole).length
+        : (features.length > 1 ? features.length : 0);
+    return CoupledNodeMarkerWidget.calculateMarkerSize(satelliteCount);
   }
 }
